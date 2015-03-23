@@ -10,6 +10,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -53,13 +59,32 @@ public class MainActivity extends ActionBarActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
+        ArrayAdapter<String> mScoreboardAdapter;
+
         public PlaceholderFragment() {
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+
+            String[] data = {
+                    "Boston Celtics @ Dallas Mavericks",
+                    "Brooklyn Nets @ Memphis Grizzlies",
+                    "New York Knicks @ Houston Rockets",
+                    "Philadelphia 76ers @ New Orleans Pelicans",
+                    "Chicago Bulls @ Denver Nuggets",
+                    "San Antonio Spurs @ Cleveland Cavaliers",
+                    "Detroit Pistons @ Oklahoma City Thunder"
+            };
+
+            List<String> dayScoreboard = new ArrayList<String>(Arrays.asList(data));
+
+            mScoreboardAdapter = new ArrayAdapter<String>(getActivity(),R.layout.list_item_scoreboard,R.id.list_item_scoreboard_textView,dayScoreboard);
+
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            ListView listView = (ListView) rootView.findViewById(R.id.listview_scoreboard);
+            listView.setAdapter(mScoreboardAdapter);
             return rootView;
         }
     }
