@@ -1,5 +1,6 @@
 package com.adeleon.sport.nbascoreboard.app;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -55,7 +56,7 @@ public class ScoreboardFragment extends Fragment {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
             FetchScoreTask scoreTask = new FetchScoreTask();
-            scoreTask.execute();
+            scoreTask.execute("20150325");
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -96,23 +97,42 @@ public class ScoreboardFragment extends Fragment {
         return rootView;
     }
 
-    public class FetchScoreTask extends AsyncTask<Void, Void, Void> {
+    public class FetchScoreTask extends AsyncTask<String, Void, Void> {
 
         private final String LOG_TAG = FetchScoreTask.class.getSimpleName();
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(String... params) {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
+            if (params.length == 0){
+                return null;
+            }
+
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
             // Will contain the raw JSON response as a string.
             String scoreboardJsonStr = null;
+            String sport_type = "nba";
+
 
             try {
 
-                URL url = new URL("https://erikberg.com/events.json?date=20150325&sport=nba");
+                final String  SCOREBOARD_BASE_URL = "https://erikberg.com/events.json?";
+                final String DAY_PARAM = "date";
+                final String CATEGORY_PARAM = "sport";
+
+                Uri builtUri = Uri.parse(SCOREBOARD_BASE_URL).buildUpon()
+                        .appendQueryParameter(DAY_PARAM, params[0])
+                        .appendQueryParameter(CATEGORY_PARAM, sport_type)
+                        .build();
+
+                URL url = new URL(builtUri.toString());
+
+                Log.v(LOG_TAG, "Built URI " + builtUri.toString());
+
+               // URL url = new URL("https://erikberg.com/events.json?date=20150325&sport=nba");
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -137,7 +157,7 @@ public class ScoreboardFragment extends Fragment {
                     return null;
                 }
                 scoreboardJsonStr = buffer.toString();
-                Log.v(LOG_TAG," Scoreboard JSON string "+scoreboardJsonStr);
+                //Log.v(LOG_TAG," Scoreboard JSON string "+scoreboardJsonStr);
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
