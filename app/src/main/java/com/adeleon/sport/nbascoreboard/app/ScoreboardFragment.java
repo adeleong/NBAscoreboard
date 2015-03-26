@@ -112,7 +112,7 @@ public class ScoreboardFragment extends Fragment {
 
             try {
 
-                URL url = new URL("https://erikberg.com/events.json?date=20150306&sport=nba");
+                URL url = new URL("https://erikberg.com/events.json?date=20150325&sport=nba");
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
