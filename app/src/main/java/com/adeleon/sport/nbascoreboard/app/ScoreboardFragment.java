@@ -1,5 +1,6 @@
 package com.adeleon.sport.nbascoreboard.app;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -98,6 +100,16 @@ public class ScoreboardFragment extends Fragment {
         // Get a reference to the ListView, and attach this adapter to it.
         ListView listView = (ListView) rootView.findViewById(R.id.listview_scoreboard);
         listView.setAdapter(mScoreboardAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                String scoreBoard = mScoreboardAdapter.getItem(position);
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                .putExtra(Intent.EXTRA_TEXT, scoreBoard);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
@@ -180,8 +192,7 @@ public class ScoreboardFragment extends Fragment {
 
         @Override
         protected String[] doInBackground(String... params) {
-            // These two need to be declared outside the try/catch
-            // so that they can be closed in the finally block.
+
             if (params.length == 0){
                 return null;
             }
@@ -193,7 +204,6 @@ public class ScoreboardFragment extends Fragment {
             String scoreboardJsonStr = null;
             String sport_type = "nba";
             String authotization_value = "Bearer a96e320b-7cdd-49ef-87a8-d30a6054cb1e";
-
 
             try {
 
@@ -264,6 +274,16 @@ public class ScoreboardFragment extends Fragment {
             }
 
             return null;
+        }
+        @Override
+        protected void onPostExecute(String[] result) {
+            if (result != null) {
+                mScoreboardAdapter.clear();
+                for(String dayScoreStr : result) {
+                    mScoreboardAdapter.add(dayScoreStr);
+                }
+                // New data is back from the server.  Hooray!
+            }
         }
     }
 }
