@@ -1,10 +1,14 @@
 package com.adeleon.sport.nbascoreboard.app;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import org.json.JSONArray;
@@ -29,7 +35,9 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -37,6 +45,9 @@ import java.util.List;
  */
 
 public class ScoreboardFragment extends Fragment {
+    private static final String TAG_DATE_DIALOG = "date_dialog";
+    private EditText dateScoreEditText;
+    private DatePickerFragment dateScoreDatePickDialog;
 
     private ArrayAdapter<String> mScoreboardAdapter;
 
@@ -52,7 +63,7 @@ public class ScoreboardFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.scoreboardfragment , menu);
+        inflater.inflate(R.menu.scoreboardfragment, menu);
     }
 
     @Override
@@ -106,19 +117,54 @@ public class ScoreboardFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 String scoreBoard = mScoreboardAdapter.getItem(position);
                 Intent intent = new Intent(getActivity(), DetailActivity.class)
-                .putExtra(Intent.EXTRA_TEXT, scoreBoard);
+                        .putExtra(Intent.EXTRA_TEXT, scoreBoard);
                 startActivity(intent);
             }
         });
 
+        dateScoreEditText = (EditText) rootView.findViewById(R.id.date_score_edittext);
+        dateScoreEditText.setInputType(InputType.TYPE_NULL);
+        dateScoreEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v == dateScoreEditText) {
+                    dateScoreDatePickDialog.show(getFragmentManager(), TAG_DATE_DIALOG);
+                }
+            }
+        });
+
+        setDateTimeField();
+
         return rootView;
+    }
+
+    private void setDateTimeField() {
+        dateScoreDatePickDialog = new DatePickerFragment();
+        /**
+         * Set Up Current Date Into dialog
+         */
+        Calendar calender = Calendar.getInstance();
+        Bundle args = new Bundle();
+        args.putInt("year", calender.get(Calendar.YEAR));
+        args.putInt("month", calender.get(Calendar.MONTH));
+        args.putInt("day", calender.get(Calendar.DAY_OF_MONTH));
+        dateScoreDatePickDialog.setArguments(args);
+        /**
+         * Set Call back to capture selected date
+         */
+        dateScoreDatePickDialog.setCallBack(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                dateScoreEditText.setText("year:" + year + "month:" + monthOfYear + "day:" + dayOfMonth);
+            }
+        });
     }
 
     public class FetchScoreTask extends AsyncTask<String, Void, String[]> {
 
         private final String LOG_TAG = FetchScoreTask.class.getSimpleName();
 
-        private String getReadableDateString(long time){
+        private String getReadableDateString(long time) {
             // Because the API returns a unix timestamp (measured in seconds),
             // it must be converted to milliseconds in order to be converted to valid date.
             SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd");
@@ -140,7 +186,7 @@ public class ScoreboardFragment extends Fragment {
         /**
          * Take the String representing the complete forecast in JSON Format and
          * pull out the data we need to construct the Strings needed for the wireframes.
-         *
+         * <p/>
          * Fortunately parsing is easy:  constructor takes the JSON string and converts it
          * into an Object hierarchy for us.
          */
@@ -160,7 +206,7 @@ public class ScoreboardFragment extends Fragment {
             JSONArray scoreArray = scoreJson.getJSONArray(OSB_EVENT);
 
             String[] resultStrs = new String[scoreArray.length()];
-            for(int i = 0; i < scoreArray.length(); i++) {
+            for (int i = 0; i < scoreArray.length(); i++) {
 
                 String awayTeam;
                 String homeTeam;
@@ -180,7 +226,7 @@ public class ScoreboardFragment extends Fragment {
                 JSONObject homeTeamObject = dayScoreboard.getJSONObject(OSB_HOME_TEAM);
                 homeTeam = homeTeamObject.getString(OSB_FULL_NAME);
 
-                resultStrs[i] = awayTeam + " " +awayPointScored +" @ " + homeTeam +" "+homePointScored;
+                resultStrs[i] = awayTeam + " " + awayPointScored + " @ " + homeTeam + " " + homePointScored;
             }
 
             for (String s : resultStrs) {
@@ -193,7 +239,7 @@ public class ScoreboardFragment extends Fragment {
         @Override
         protected String[] doInBackground(String... params) {
 
-            if (params.length == 0){
+            if (params.length == 0) {
                 return null;
             }
 
@@ -221,7 +267,7 @@ public class ScoreboardFragment extends Fragment {
 
                 Log.v(LOG_TAG, "Built URI " + builtUri.toString());
 
-               // URL url = new URL("https://erikberg.com/events.json?date=20150325&sport=nba");
+                // URL url = new URL("https://erikberg.com/events.json?date=20150325&sport=nba");
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -246,7 +292,7 @@ public class ScoreboardFragment extends Fragment {
                     return null;
                 }
                 scoreboardJsonStr = buffer.toString();
-                Log.v(LOG_TAG," Scoreboard JSON string "+scoreboardJsonStr);
+                Log.v(LOG_TAG, " Scoreboard JSON string " + scoreboardJsonStr);
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
@@ -275,15 +321,42 @@ public class ScoreboardFragment extends Fragment {
 
             return null;
         }
+
         @Override
         protected void onPostExecute(String[] result) {
             if (result != null) {
                 mScoreboardAdapter.clear();
-                for(String dayScoreStr : result) {
+                for (String dayScoreStr : result) {
                     mScoreboardAdapter.add(dayScoreStr);
                 }
                 // New data is back from the server.  Hooray!
             }
+        }
+    }
+
+    public class DatePickerFragment extends DialogFragment {
+        DatePickerDialog.OnDateSetListener ondateSet;
+
+        public DatePickerFragment() {
+        }
+
+        public void setCallBack(DatePickerDialog.OnDateSetListener ondate) {
+            ondateSet = ondate;
+        }
+
+        private int year, month, day;
+
+        @Override
+        public void setArguments(Bundle args) {
+            super.setArguments(args);
+            year = args.getInt("year");
+            month = args.getInt("month");
+            day = args.getInt("day");
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return new DatePickerDialog(getActivity(), ondateSet, year, month, day);
         }
     }
 }
