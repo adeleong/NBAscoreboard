@@ -32,12 +32,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
+import java.util.Date;
 
 
 /**
@@ -48,6 +47,7 @@ public class ScoreboardFragment extends Fragment {
     private static final String TAG_DATE_DIALOG = "date_dialog";
     private EditText dateScoreEditText;
     private DatePickerFragment dateScoreDatePickDialog;
+    private SimpleDateFormat formatter;
 
     private ArrayAdapter<String> mScoreboardAdapter;
 
@@ -73,28 +73,52 @@ public class ScoreboardFragment extends Fragment {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            FetchScoreTask scoreTask = new FetchScoreTask();
-            scoreTask.execute("20150325");
+            updateScoreboard();
+
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateScoreboard() {
+        FetchScoreTask scoreTask = new FetchScoreTask();
+        String dayScoreStr, dayScoreResult = null;
+        Date date = null;
+
+        if (! dateScoreEditText.getText().toString().equals("")) {
+            formatter = new SimpleDateFormat("MMMM d, yyyy");
+            dayScoreStr = dateScoreEditText.getText().toString();
+            try {
+            date = formatter.parse(dayScoreStr);
+            formatter = new SimpleDateFormat("yyyyMMdd", java.util.Locale.getDefault());
+            dayScoreResult  = formatter.format(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        else{
+            formatter = new SimpleDateFormat("yyyyMMdd", java.util.Locale.getDefault());
+            Calendar cal = Calendar.getInstance();
+            dayScoreResult = formatter.format( cal.getTime());
+            formatter  = new SimpleDateFormat("MMMM d, yyyy", java.util.Locale.getDefault());
+            dayScoreStr = formatter.format( cal.getTime());
+            dateScoreEditText.setText(dayScoreStr);
+        }
+
+        scoreTask.execute(dayScoreResult);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateScoreboard();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Create some dummy data for the ListView.  Here's a sample weekly forecast
-        String[] data = {
-                "Boston Celtics @ Dallas Mavericks",
-                "Brooklyn Nets @ Memphis Grizzlies",
-                "New York Knicks @ Houston Rockets",
-                "Philadelphia 76ers @ New Orleans Pelicans",
-                "Chicago Bulls @ Denver Nuggets",
-                "San Antonio Spurs @ Cleveland Cavaliers",
-                "Detroit Pistons @ Oklahoma City Thunder"
-        };
-        List<String> dayScoreboard = new ArrayList<String>(Arrays.asList(data));
+
 
         // Now that we have some dummy forecast data, create an ArrayAdapter.
         // The ArrayAdapter will take data from a source (like our dummy forecast) and
@@ -104,7 +128,7 @@ public class ScoreboardFragment extends Fragment {
                         getActivity(), // The current context (this activity)
                         R.layout.list_item_scoreboard, // The name of the layout ID.
                         R.id.list_item_scoreboard_textView, // The ID of the textview to populate.
-                        dayScoreboard);
+                        new ArrayList<String>());
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -155,7 +179,19 @@ public class ScoreboardFragment extends Fragment {
         dateScoreDatePickDialog.setCallBack(new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                dateScoreEditText.setText("year:" + year + "month:" + monthOfYear + "day:" + dayOfMonth);
+                formatter  = new SimpleDateFormat("dd-MM-yyyy", java.util.Locale.getDefault());
+                String dateInString = dayOfMonth+"-"+(monthOfYear+1)+"-"+year;
+                Date date = null;
+                try {
+
+                    date = formatter .parse(dateInString);
+                    formatter  = new SimpleDateFormat("MMMM d, yyyy", java.util.Locale.getDefault());
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                dateScoreEditText.setText(formatter.format(date));
             }
         });
     }
@@ -334,7 +370,7 @@ public class ScoreboardFragment extends Fragment {
         }
     }
 
-    public class DatePickerFragment extends DialogFragment {
+    public static class DatePickerFragment extends DialogFragment {
         DatePickerDialog.OnDateSetListener ondateSet;
 
         public DatePickerFragment() {

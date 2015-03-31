@@ -15,5 +15,6 @@
 
     <!-- Default postal code for location preference [CHAR LIMIT=NONE] -->
     <string name="pref_day_default" translatable="false">20150325</string>
+    <string name="action_share">Share</string>
 
 </resources>

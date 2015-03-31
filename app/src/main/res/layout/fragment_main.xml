@@ -13,7 +13,8 @@
         android:layout_height="0dp"
         android:inputType="text"
         android:layout_weight="1"
-        android:ems="10" />
+        android:ems="10"
+        android:textAlignment="center" />
 
     <ListView
         android:id="@+id/listview_scoreboard"
