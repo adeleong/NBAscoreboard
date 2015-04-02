@@ -30,40 +30,24 @@ public class ScoreboardContract {
         public static final String TABLE_NAME = "event";
 
         public static final String COLUMN_EVENT_ID = "event_id";
-        public static final String COLUMN_TEAM_ID = "city_name";
-        public static final String COLUMN_START_DATE_TIME = "coord_lat";
-        public static final String COLUMN_EVENT_STATUS = "coord_long";
-        public static final String COLUMN_ABBREVIATION = "coord_long";
-        public static final String COLUMN_FIRST_NAME_TEAM = "coord_long";
-        public static final String COLUMN_LAST_NAME_TEAM = "coord_long";
-        public static final String COLUMN_TEAM_HOME = "coord_long";
-        public static final String COLUMN_PERIOD_SCORE_FIRTS = "coord_long";
-
-
-        /*EVENT_ID: "20150325-brooklyn-nets-at-charlotte-hornets",
-        EVENT_STATUS: "completed",
-        START_DATE_TIME: "2015-03-25T19:00:00-04:00",
-        TEAM_ID: "brooklyn-nets",
-        ABBREVIATION: "BKN",
-        FIRST_NAME_TEAM": "BROOKLYN",
-        last_name_team": "Nets",
-        POINTS_SCORED: 95
-        PERIOD_SCORES:[0,1,2,3]
-        TEAM_HOME {1 , 0}
-
-        event_id: "20150325-brooklyn-nets-at-charlotte-hornets",
-        event_status: "completed",
-        start_date_time: "2015-03-25T19:00:00-04:00",
-        team_id: "brooklyn-nets",
-        abbreviation: "BKN",
-        first_name_team": "Brooklyn",
-        last_name_team": "Nets",
-        points_scored: 95
-        period_scores:[0,1,2,3]
-        team_home {1 , 0}*/
-
+        public static final String COLUMN_TEAM_ID = "team_id";
+        public static final String COLUMN_START_DATE_TIME = "start_date_time";
+        public static final String COLUMN_EVENT_STATUS = "event_status";
+        public static final String COLUMN_ABBREVIATION = "abbreviation";
+        public static final String COLUMN_FIRST_NAME_TEAM = "first_name_team";
+        public static final String COLUMN_LAST_NAME_TEAM = "last_name_team";
+        public static final String COLUMN_TEAM_HOME = "team_home";
+        public static final String COLUMN_PERIOD_SCORE_FIRTS = "period_score_firts";
+        public static final String COLUMN_PERIOD_SCORE_SECOND = "period_score_second";
+        public static final String COLUMN_PERIOD_SCORE_THIRD = "period_score_third";
+        public static final String COLUMN_PERIOD_SCORE_FOURTH = "period_score_fourth";
 
     }
+
+
+
+
+
 
     /* Inner class that defines the contents of the weather table */
     public static final class EventPlayerEntry implements BaseColumns {
