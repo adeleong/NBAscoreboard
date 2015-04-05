@@ -25,29 +25,50 @@ public class ScoreboardContract {
     /*
         Inner class that defines the contents of the location table
      */
-    public static final class LocationEntry implements BaseColumns {
+    public static final class EventEntry implements BaseColumns {
 
-        public static final String TABLE_NAME = "location";
+        public static final String TABLE_NAME = "event";
 
-        // The location setting string is what will be sent to openweathermap
-        // as the location query.
-        public static final String COLUMN_LOCATION_SETTING = "location_setting";
+        public static final String COLUMN_EVENT_ID = "event_id";
+        public static final String COLUMN_TEAM_ID = "city_name";
+        public static final String COLUMN_START_DATE_TIME = "coord_lat";
+        public static final String COLUMN_EVENT_STATUS = "coord_long";
+        public static final String COLUMN_ABBREVIATION = "coord_long";
+        public static final String COLUMN_FIRST_NAME_TEAM = "coord_long";
+        public static final String COLUMN_LAST_NAME_TEAM = "coord_long";
+        public static final String COLUMN_TEAM_HOME = "coord_long";
+        public static final String COLUMN_PERIOD_SCORE_FIRTS = "coord_long";
 
-        // Human readable location string, provided by the API.  Because for styling,
-        // "Mountain View" is more recognizable than 94043.
-        public static final String COLUMN_CITY_NAME = "city_name";
 
-        // In order to uniquely pinpoint the location on the map when we launch the
-        // map intent, we store the latitude and longitude as returned by openweathermap.
-        public static final String COLUMN_COORD_LAT = "coord_lat";
-        public static final String COLUMN_COORD_LONG = "coord_long";
+        /*EVENT_ID: "20150325-brooklyn-nets-at-charlotte-hornets",
+        EVENT_STATUS: "completed",
+        START_DATE_TIME: "2015-03-25T19:00:00-04:00",
+        TEAM_ID: "brooklyn-nets",
+        ABBREVIATION: "BKN",
+        FIRST_NAME_TEAM": "BROOKLYN",
+        last_name_team": "Nets",
+        POINTS_SCORED: 95
+        PERIOD_SCORES:[0,1,2,3]
+        TEAM_HOME {1 , 0}
+
+        event_id: "20150325-brooklyn-nets-at-charlotte-hornets",
+        event_status: "completed",
+        start_date_time: "2015-03-25T19:00:00-04:00",
+        team_id: "brooklyn-nets",
+        abbreviation: "BKN",
+        first_name_team": "Brooklyn",
+        last_name_team": "Nets",
+        points_scored: 95
+        period_scores:[0,1,2,3]
+        team_home {1 , 0}*/
+
+
     }
 
     /* Inner class that defines the contents of the weather table */
-    public static final class WeatherEntry implements BaseColumns {
+    public static final class EventPlayerEntry implements BaseColumns {
 
-        public static final String TABLE_NAME = "weather";
-
+        public static final String TABLE_NAME = "event_player";
         // Column with the foreign key into the location table.
         public static final String COLUMN_LOC_KEY = "location_id";
         // Date, stored as long in milliseconds since the epoch
