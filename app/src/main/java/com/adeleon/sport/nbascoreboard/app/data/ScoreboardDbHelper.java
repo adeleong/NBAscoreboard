@@ -1,11 +1,12 @@
 package com.adeleon.sport.nbascoreboard.app.data;
 
+import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract.LocationEntry;
-import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract.WeatherEntry;
+import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract.EventEntry;
+import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract.EventPlayerEntry;
 
 /**
  * Created by theade on 3/31/2015.
@@ -19,7 +20,7 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
     private static final int DATABASE_VERSION = 2;
 
-    static final String DATABASE_NAME = "weather.db";
+    static final String DATABASE_NAME = "scoreboard.db";
 
     public ScoreboardDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -27,7 +28,18 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        final String SQL_CREATE_WEATHER_TABLE = "CREATE TABLE " + WeatherEntry.TABLE_NAME + " (" +
+
+
+        final String SQL_CREATE_EVENT_TABLE = "CREATE TABLE " + EventEntry.TABLE_NAME + " (" +
+                EventEntry.COLUMN_EVENT_ID + " TEXT PRIMARY KEY," +
+                EventEntry.COLUMN_TEAM_ID +  " TEXT PRIMARY KEY," +
+                EventEntry.COLUMN_LOCATION_SETTING + " TEXT UNIQUE NOT NULL, " +
+                EventEntry.COLUMN_CITY_NAME + " TEXT NOT NULL, " +
+                EventEntry.COLUMN_COORD_LAT + " REAL NOT NULL, " +
+                EventEntry.COLUMN_COORD_LONG + " REAL NOT NULL " +
+                " );";
+
+        final String SQL_CREATE_EVENT_PLAYER_TABLE = "CREATE TABLE " + EventPlayerEntry.TABLE_NAME + " (" +
                 // Why AutoIncrement here, and not above?
                 // Unique keys will be auto-generated in either case.  But for weather
                 // forecasting, it's reasonable to assume the user will want information

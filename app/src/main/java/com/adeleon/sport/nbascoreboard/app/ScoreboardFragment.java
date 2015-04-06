@@ -285,7 +285,7 @@ public class ScoreboardFragment extends Fragment {
             // Will contain the raw JSON response as a string.
             String scoreboardJsonStr = null;
             String sport_type = "nba";
-            String authotization_value = "Bearer a96e320b-7cdd-49ef-87a8-d30a6054cb1e";
+            String authotization_value = "Bearer fecf2b5f-f91a-4f7c-bfc8-abdad5613809";
 
             try {
 
