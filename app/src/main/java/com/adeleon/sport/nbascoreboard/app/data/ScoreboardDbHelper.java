@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract.TeamEntry;
 import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract.EventEntry;
 import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract.EventPlayerEntry;
 
@@ -18,7 +19,7 @@ import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract.EventPlayerEn
 public class ScoreboardDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 1;
 
     static final String DATABASE_NAME = "scoreboard.db";
 
@@ -29,14 +30,31 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
+        final String SQL_CREATE_TEAM_TABLE = "CREATE TABLE " + TeamEntry.TABLE_NAME + " (" +
+                TeamEntry.COLUMN_TEAM_ID + " TEXT PRIMARY KEY," +
+                TeamEntry.COLUMN_FIRST_NAME_TEAM +  " TEXT NOT NULL," +
+                TeamEntry.COLUMN_LAST_NAME_TEAM + " TEXT NOT NULL, " +
+                TeamEntry.COLUMN_ABBREVIATION + " TEXT NOT NULL, " +
+                TeamEntry.COLUMN_SITE_NAME + " TEXT, " +
+                TeamEntry.COLUMN_CITY + "TEXT, " +
+                TeamEntry.COLUMN_STATE + "TEXT "+
+                " );";
+
 
         final String SQL_CREATE_EVENT_TABLE = "CREATE TABLE " + EventEntry.TABLE_NAME + " (" +
                 EventEntry.COLUMN_EVENT_ID + " TEXT PRIMARY KEY," +
-                EventEntry.COLUMN_TEAM_ID +  " TEXT PRIMARY KEY," +
-                EventEntry.COLUMN_LOCATION_SETTING + " TEXT UNIQUE NOT NULL, " +
-                EventEntry.COLUMN_CITY_NAME + " TEXT NOT NULL, " +
-                EventEntry.COLUMN_COORD_LAT + " REAL NOT NULL, " +
-                EventEntry.COLUMN_COORD_LONG + " REAL NOT NULL " +
+                EventEntry.COLUMN_START_DATE_TIME +  " TEXT  NOT NULL," +
+                EventEntry.COLUMN_EVENT_STATUS + " TEXT NOT NULL, " +
+                EventEntry.COLUMN_AWAY_TEAM_ID + " TEXT NOT NULL, " +
+                EventEntry.COLUMN_HOME_TEAM_ID + " TEXT NOT NULL, " +
+                EventEntry.COLUMN_AWAY_PERIOD_FIRTS + " INTEGER NOT NULL " +
+                EventEntry.COLUMN_AWAY_PERIOD_SECOND + " INTEGER NOT NULL " +
+                EventEntry.COLUMN_AWAY_PERIOD_THIRD + " INTEGER NOT NULL " +
+                EventEntry.COLUMN_AWAY_PERIOD_FOURTH + " INTEGER NOT NULL " +
+                EventEntry.COLUMN_HOME_PERIOD_FIRTS + " INTEGER NOT NULL " +
+                EventEntry.COLUMN_HOME_PERIOD_SECOND + " INTEGER NOT NULL " +
+                EventEntry.COLUMN_HOME_PERIOD_THIRD + " INTEGER NOT NULL " +
+                EventEntry.COLUMN_HOME_PERIOD_FOURTH + " INTEGER NOT NULL " +
                 " );";
 
         final String SQL_CREATE_EVENT_PLAYER_TABLE = "CREATE TABLE " + EventPlayerEntry.TABLE_NAME + " (" +
