@@ -1,6 +1,6 @@
 package com.adeleon.sport.nbascoreboard.app.data;
 
-import android.app.usage.UsageEvents;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -45,8 +45,8 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
                 EventEntry.COLUMN_EVENT_ID + " TEXT PRIMARY KEY," +
                 EventEntry.COLUMN_START_DATE_TIME +  " TEXT  NOT NULL," +
                 EventEntry.COLUMN_EVENT_STATUS + " TEXT NOT NULL, " +
-                EventEntry.COLUMN_AWAY_TEAM_ID + " TEXT NOT NULL, " +
-                EventEntry.COLUMN_HOME_TEAM_ID + " TEXT NOT NULL, " +
+                EventEntry.COLUMN_AWAY_TEAM_ID_KEY + " TEXT NOT NULL, " +
+                EventEntry.COLUMN_HOME_TEAM_ID_KEY + " TEXT NOT NULL, " +
                 EventEntry.COLUMN_AWAY_PERIOD_FIRTS + " INTEGER NOT NULL " +
                 EventEntry.COLUMN_AWAY_PERIOD_SECOND + " INTEGER NOT NULL " +
                 EventEntry.COLUMN_AWAY_PERIOD_THIRD + " INTEGER NOT NULL " +
@@ -55,40 +55,46 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
                 EventEntry.COLUMN_HOME_PERIOD_SECOND + " INTEGER NOT NULL " +
                 EventEntry.COLUMN_HOME_PERIOD_THIRD + " INTEGER NOT NULL " +
                 EventEntry.COLUMN_HOME_PERIOD_FOURTH + " INTEGER NOT NULL " +
-                " );";
+                // Set up the location column as a foreign key to location table.
+                " FOREIGN KEY (" + EventEntry.COLUMN_AWAY_TEAM_ID_KEY + ") REFERENCES " +
+                TeamEntry.TABLE_NAME + " (" + TeamEntry.COLUMN_TEAM_ID + "), " +
+                " FOREIGN KEY (" + EventEntry.COLUMN_HOME_TEAM_ID_KEY + ") REFERENCES " +
+                TeamEntry.TABLE_NAME + " (" + TeamEntry.COLUMN_TEAM_ID + "), " +
+                " UNIQUE (" + EventEntry.COLUMN_START_DATE_TIME + ", " +
+                EventEntry.COLUMN_EVENT_ID + ", "+EventEntry.COLUMN_EVENT_STATUS +" ) ON CONFLICT REPLACE);";
+
 
         final String SQL_CREATE_EVENT_PLAYER_TABLE = "CREATE TABLE " + EventPlayerEntry.TABLE_NAME + " (" +
-                // Why AutoIncrement here, and not above?
-                // Unique keys will be auto-generated in either case.  But for weather
-                // forecasting, it's reasonable to assume the user will want information
-                // for a certain date and all dates *following*, so the forecast data
-                // should be sorted accordingly.
-                WeatherEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
 
-                // the ID of the location entry associated with this weather data
-                WeatherEntry.COLUMN_LOC_KEY + " INTEGER NOT NULL, " +
-                WeatherEntry.COLUMN_DATE + " INTEGER NOT NULL, " +
-                WeatherEntry.COLUMN_SHORT_DESC + " TEXT NOT NULL, " +
-                WeatherEntry.COLUMN_WEATHER_ID + " INTEGER NOT NULL," +
-
-                WeatherEntry.COLUMN_MIN_TEMP + " REAL NOT NULL, " +
-                WeatherEntry.COLUMN_MAX_TEMP + " REAL NOT NULL, " +
-
-                WeatherEntry.COLUMN_HUMIDITY + " REAL NOT NULL, " +
-                WeatherEntry.COLUMN_PRESSURE + " REAL NOT NULL, " +
-                WeatherEntry.COLUMN_WIND_SPEED + " REAL NOT NULL, " +
-                WeatherEntry.COLUMN_DEGREES + " REAL NOT NULL, " +
-
+                EventPlayerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                //EventPlayerEntry.COLUMN_EVENT_PLAYER_ID + " INTEGER NOT NULL, " +
+                EventPlayerEntry.COLUMN_EVENT_ID_KEY + " TEXT NOT NULL, " +
+                EventPlayerEntry.COLUMN_TEAM_ID_KEY + " TEXT NOT NULL," +
+                EventPlayerEntry.COLUMN_FIRST_NAME + " TEXT NOT NULL, " +
+                EventPlayerEntry.COLUMN_LAST_NAME + " TEXT NOT NULL, " +
+                EventPlayerEntry.COLUMN_POSITION + " TEXT NOT NULL, " +
+                EventPlayerEntry.COLUMN_MINUTES + " INTEGER NOT NULL, " +
+                EventPlayerEntry.COLUMN_POINTS + " INTEGER NOT NULL, " +
+                EventPlayerEntry.COLUMN_ASSISTS + " INTEGER NOT NULL, " +
+                EventPlayerEntry.COLUMN_BLOCKS + " INTEGER NOT NULL, " +
+                EventPlayerEntry.COLUMN_REBOUNDS + " INTEGER NOT NULL, " +
                 // Set up the location column as a foreign key to location table.
-                " FOREIGN KEY (" + WeatherEntry.COLUMN_LOC_KEY + ") REFERENCES " +
-                LocationEntry.TABLE_NAME + " (" + LocationEntry._ID + "), " +
+                " FOREIGN KEY (" + EventPlayerEntry.COLUMN_EVENT_ID_KEY + ") REFERENCES " +
+                EventEntry.TABLE_NAME + " (" + EventEntry._ID + "), " +
+                " FOREIGN KEY (" + EventPlayerEntry.COLUMN_TEAM_ID_KEY + ") REFERENCES " +
+                TeamEntry.TABLE_NAME + " (" + TeamEntry._ID + "), " +
 
                 // To assure the application have just one weather entry per day
                 // per location, it's created a UNIQUE constraint with REPLACE strategy
-                " UNIQUE (" + WeatherEntry.COLUMN_DATE + ", " +
-                WeatherEntry.COLUMN_LOC_KEY + ") ON CONFLICT REPLACE);";
+                " UNIQUE (" + EventPlayerEntry.COLUMN_EVENT_ID_KEY + ", "
+                            +  EventPlayerEntry.COLUMN_TEAM_ID_KEY + ", "
+                            + EventPlayerEntry.COLUMN_FIRST_NAME  + ", "
+                            + EventPlayerEntry.COLUMN_LAST_NAME +
+                ") ON CONFLICT REPLACE);";
 
-        sqLiteDatabase.execSQL(SQL_CREATE_WEATHER_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_TEAM_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_EVENT_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_EVENT_PLAYER_TABLE);
     }
 
     @Override
@@ -99,8 +105,9 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
         // It does NOT depend on the version number for your application.
         // If you want to update the schema without wiping data, commenting out the next 2 lines
         // should be your top priority before modifying this method.
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + LocationEntry.TABLE_NAME);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + WeatherEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TeamEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + EventEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + EventPlayerEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
 }

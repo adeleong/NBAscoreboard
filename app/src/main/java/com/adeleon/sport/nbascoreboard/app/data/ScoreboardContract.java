@@ -33,8 +33,8 @@ public class ScoreboardContract {
         public static final String COLUMN_EVENT_ID = "event_id";
         public static final String COLUMN_START_DATE_TIME = "start_date_time";
         public static final String COLUMN_EVENT_STATUS = "event_status";
-        public static final String COLUMN_AWAY_TEAM_ID = "away_team_id";
-        public static final String COLUMN_HOME_TEAM_ID = "home_team_id";
+        public static final String COLUMN_AWAY_TEAM_ID_KEY = "away_team_id";
+        public static final String COLUMN_HOME_TEAM_ID_KEY = "home_team_id";
         public static final String COLUMN_AWAY_PERIOD_FIRTS = "away_period_firts";
         public static final String COLUMN_AWAY_PERIOD_SECOND = "away_period_second";
         public static final String COLUMN_AWAY_PERIOD_THIRD = "away_period_third";
