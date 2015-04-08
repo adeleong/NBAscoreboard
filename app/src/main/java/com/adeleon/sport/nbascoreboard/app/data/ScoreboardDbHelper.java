@@ -31,13 +31,13 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
         final String SQL_CREATE_TEAM_TABLE = "CREATE TABLE " + TeamEntry.TABLE_NAME + " (" +
-                TeamEntry.COLUMN_TEAM_ID + " TEXT PRIMARY KEY," +
+                TeamEntry.COLUMN_TEAM_ID + " TEXT PRIMARY KEY, " +
                 TeamEntry.COLUMN_FIRST_NAME_TEAM +  " TEXT NOT NULL," +
                 TeamEntry.COLUMN_LAST_NAME_TEAM + " TEXT NOT NULL, " +
                 TeamEntry.COLUMN_ABBREVIATION + " TEXT NOT NULL, " +
                 TeamEntry.COLUMN_SITE_NAME + " TEXT, " +
-                TeamEntry.COLUMN_CITY + "TEXT, " +
-                TeamEntry.COLUMN_STATE + "TEXT "+
+                TeamEntry.COLUMN_CITY + " TEXT, " +
+                TeamEntry.COLUMN_STATE + " TEXT "+
                 " );";
 
 
@@ -47,15 +47,14 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
                 EventEntry.COLUMN_EVENT_STATUS + " TEXT NOT NULL, " +
                 EventEntry.COLUMN_AWAY_TEAM_ID_KEY + " TEXT NOT NULL, " +
                 EventEntry.COLUMN_HOME_TEAM_ID_KEY + " TEXT NOT NULL, " +
-                EventEntry.COLUMN_AWAY_PERIOD_FIRTS + " INTEGER NOT NULL " +
-                EventEntry.COLUMN_AWAY_PERIOD_SECOND + " INTEGER NOT NULL " +
-                EventEntry.COLUMN_AWAY_PERIOD_THIRD + " INTEGER NOT NULL " +
-                EventEntry.COLUMN_AWAY_PERIOD_FOURTH + " INTEGER NOT NULL " +
-                EventEntry.COLUMN_HOME_PERIOD_FIRTS + " INTEGER NOT NULL " +
-                EventEntry.COLUMN_HOME_PERIOD_SECOND + " INTEGER NOT NULL " +
-                EventEntry.COLUMN_HOME_PERIOD_THIRD + " INTEGER NOT NULL " +
-                EventEntry.COLUMN_HOME_PERIOD_FOURTH + " INTEGER NOT NULL " +
-                // Set up the location column as a foreign key to location table.
+                EventEntry.COLUMN_AWAY_PERIOD_FIRTS + " INTEGER NOT NULL, " +
+                EventEntry.COLUMN_AWAY_PERIOD_SECOND + " INTEGER NOT NULL, " +
+                EventEntry.COLUMN_AWAY_PERIOD_THIRD + " INTEGER NOT NULL, " +
+                EventEntry.COLUMN_AWAY_PERIOD_FOURTH + " INTEGER NOT NULL, " +
+                EventEntry.COLUMN_HOME_PERIOD_FIRTS + " INTEGER NOT NULL, " +
+                EventEntry.COLUMN_HOME_PERIOD_SECOND + " INTEGER NOT NULL, " +
+                EventEntry.COLUMN_HOME_PERIOD_THIRD + " INTEGER NOT NULL, " +
+                EventEntry.COLUMN_HOME_PERIOD_FOURTH + " INTEGER NOT NULL, " +
                 " FOREIGN KEY (" + EventEntry.COLUMN_AWAY_TEAM_ID_KEY + ") REFERENCES " +
                 TeamEntry.TABLE_NAME + " (" + TeamEntry.COLUMN_TEAM_ID + "), " +
                 " FOREIGN KEY (" + EventEntry.COLUMN_HOME_TEAM_ID_KEY + ") REFERENCES " +
