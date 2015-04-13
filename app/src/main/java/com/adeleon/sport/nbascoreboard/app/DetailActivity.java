@@ -1,6 +1,8 @@
 package com.adeleon.sport.nbascoreboard.app;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -53,6 +55,13 @@ public class DetailActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public Intent getParentActivityIntent(){
+       return super.getParentActivityIntent().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
+    }
+
+
     /**
      * A placeholder fragment containing a simple view.
      */
@@ -97,13 +106,13 @@ public class DetailActivity extends ActionBarActivity {
             // Attach an intent to this ShareActionProvider.  You can update this at any time,
             // like when the user selects a new piece of data they might like to share.
             if (mShareActionProvider != null ) {
-                mShareActionProvider.setShareIntent(createShareForecastIntent());
+                mShareActionProvider.setShareIntent(createShareScoreIntent());
             } else {
                 Log.d(LOG_TAG, "Share Action Provider is null?");
             }
         }
 
-        private Intent createShareForecastIntent() {
+        private Intent createShareScoreIntent() {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
             shareIntent.setType("text/plain");

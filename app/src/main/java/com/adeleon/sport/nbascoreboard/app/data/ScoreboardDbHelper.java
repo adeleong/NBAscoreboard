@@ -5,9 +5,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract.TeamEntry;
 import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract.EventEntry;
 import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract.EventPlayerEntry;
+import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract.TeamEntry;
 
 /**
  * Created by theade on 3/31/2015.
@@ -31,14 +31,15 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
         final String SQL_CREATE_TEAM_TABLE = "CREATE TABLE " + TeamEntry.TABLE_NAME + " (" +
-                TeamEntry.COLUMN_TEAM_ID + " TEXT PRIMARY KEY, " +
+                TeamEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "+
+                TeamEntry.COLUMN_TEAM_ID + " TEXT  NOT NULL, " +
                 TeamEntry.COLUMN_FIRST_NAME_TEAM +  " TEXT NOT NULL," +
                 TeamEntry.COLUMN_LAST_NAME_TEAM + " TEXT NOT NULL, " +
                 TeamEntry.COLUMN_ABBREVIATION + " TEXT NOT NULL, " +
                 TeamEntry.COLUMN_SITE_NAME + " TEXT, " +
                 TeamEntry.COLUMN_CITY + " TEXT, " +
-                TeamEntry.COLUMN_STATE + " TEXT "+
-                " );";
+                TeamEntry.COLUMN_STATE + " TEXT, "+
+                " UNIQUE (" + TeamEntry.COLUMN_TEAM_ID + ") ON CONFLICT REPLACE);";
 
 
         final String SQL_CREATE_EVENT_TABLE = "CREATE TABLE " + EventEntry.TABLE_NAME + " (" +
@@ -47,18 +48,18 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
                 EventEntry.COLUMN_EVENT_STATUS + " TEXT NOT NULL, " +
                 EventEntry.COLUMN_AWAY_TEAM_ID_KEY + " TEXT NOT NULL, " +
                 EventEntry.COLUMN_HOME_TEAM_ID_KEY + " TEXT NOT NULL, " +
-                EventEntry.COLUMN_AWAY_PERIOD_FIRTS + " INTEGER NOT NULL, " +
-                EventEntry.COLUMN_AWAY_PERIOD_SECOND + " INTEGER NOT NULL, " +
-                EventEntry.COLUMN_AWAY_PERIOD_THIRD + " INTEGER NOT NULL, " +
-                EventEntry.COLUMN_AWAY_PERIOD_FOURTH + " INTEGER NOT NULL, " +
-                EventEntry.COLUMN_HOME_PERIOD_FIRTS + " INTEGER NOT NULL, " +
-                EventEntry.COLUMN_HOME_PERIOD_SECOND + " INTEGER NOT NULL, " +
-                EventEntry.COLUMN_HOME_PERIOD_THIRD + " INTEGER NOT NULL, " +
-                EventEntry.COLUMN_HOME_PERIOD_FOURTH + " INTEGER NOT NULL, " +
+                EventEntry.COLUMN_AWAY_PERIOD_FIRTS + " INTEGER , " +
+                EventEntry.COLUMN_AWAY_PERIOD_SECOND + " INTEGER, " +
+                EventEntry.COLUMN_AWAY_PERIOD_THIRD + " INTEGER, " +
+                EventEntry.COLUMN_AWAY_PERIOD_FOURTH + " INTEGER, " +
+                EventEntry.COLUMN_HOME_PERIOD_FIRTS + " INTEGER, " +
+                EventEntry.COLUMN_HOME_PERIOD_SECOND + " INTEGER, " +
+                EventEntry.COLUMN_HOME_PERIOD_THIRD + " INTEGER, " +
+                EventEntry.COLUMN_HOME_PERIOD_FOURTH + " INTEGER, " +
                 " FOREIGN KEY (" + EventEntry.COLUMN_AWAY_TEAM_ID_KEY + ") REFERENCES " +
-                TeamEntry.TABLE_NAME + " (" + TeamEntry.COLUMN_TEAM_ID + "), " +
+                TeamEntry.TABLE_NAME + " (" + TeamEntry._ID + "), " +
                 " FOREIGN KEY (" + EventEntry.COLUMN_HOME_TEAM_ID_KEY + ") REFERENCES " +
-                TeamEntry.TABLE_NAME + " (" + TeamEntry.COLUMN_TEAM_ID + "), " +
+                TeamEntry.TABLE_NAME + " (" + TeamEntry._ID + "), " +
                 " UNIQUE (" + EventEntry.COLUMN_START_DATE_TIME + ", " +
                 EventEntry.COLUMN_EVENT_ID + ", "+EventEntry.COLUMN_EVENT_STATUS +" ) ON CONFLICT REPLACE);";
 
@@ -66,7 +67,6 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_EVENT_PLAYER_TABLE = "CREATE TABLE " + EventPlayerEntry.TABLE_NAME + " (" +
 
                 EventPlayerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                //EventPlayerEntry.COLUMN_EVENT_PLAYER_ID + " INTEGER NOT NULL, " +
                 EventPlayerEntry.COLUMN_EVENT_ID_KEY + " TEXT NOT NULL, " +
                 EventPlayerEntry.COLUMN_TEAM_ID_KEY + " TEXT NOT NULL," +
                 EventPlayerEntry.COLUMN_FIRST_NAME + " TEXT NOT NULL, " +
