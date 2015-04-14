@@ -1,6 +1,9 @@
 package com.adeleon.sport.nbascoreboard.app.data;
 
 import android.provider.BaseColumns;
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.net.Uri;
 
 /**
  * Created by theade on 3/31/2015.
@@ -12,10 +15,26 @@ import android.provider.BaseColumns;
 public class ScoreboardContract {
 
 
+    public static final String CONTENT_AUTHORITY = "com.adeleon.sport.nbascoreboard.app";
+
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+
+    public static final String PATH_EVENT = "event";
+    public static final String PATH_TEAM = "team";
+
+
     /*
         Inner class that defines the contents of the TeamEntry table
      */
     public static final class TeamEntry implements BaseColumns {
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_TEAM).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TEAM;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TEAM;
 
         public static final String TABLE_NAME = "team";
         public static final String COLUMN_TEAM_ID = "team_id";
@@ -25,9 +44,22 @@ public class ScoreboardContract {
         public static final String COLUMN_SITE_NAME = "site_name";
         public static final String COLUMN_CITY = "city";
         public static final String COLUMN_STATE = "state";
+
+        /*public static Uri buildTeamUri(String teamId) {
+               return ContentUris.withAppendedId(CONTENT_URI, teamId);
+        }*/
+
     }
 
     public static final class EventEntry implements BaseColumns {
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_EVENT).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_EVENT;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_EVENT;
 
         public static final String TABLE_NAME = "event";
         public static final String COLUMN_EVENT_ID = "event_id";
@@ -43,6 +75,45 @@ public class ScoreboardContract {
         public static final String COLUMN_HOME_PERIOD_SECOND = "home_period_second";
         public static final String COLUMN_HOME_PERIOD_THIRD = "home_period_third";
         public static final String COLUMN_HOME_PERIOD_FOURTH = "home_period_fourth";
+
+        public static Uri buildWeatherUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        /*
+            Student: Fill in this buildWeatherLocation function
+         */
+        public static Uri buildWeatherLocation(String locationSetting) {
+            return null;
+        }
+
+        public static Uri buildWeatherLocationWithStartDate(
+                String locationSetting, long startDate) {
+            long normalizedDate = normalizeDate(startDate);
+            return CONTENT_URI.buildUpon().appendPath(locationSetting)
+                    .appendQueryParameter(COLUMN_DATE, Long.toString(normalizedDate)).build();
+        }
+
+        public static Uri buildWeatherLocationWithDate(String locationSetting, long date) {
+            return CONTENT_URI.buildUpon().appendPath(locationSetting)
+                    .appendPath(Long.toString(normalizeDate(date))).build();
+        }
+
+        public static String getLocationSettingFromUri(Uri uri) {
+            return uri.getPathSegments().get(1);
+        }
+
+        public static long getDateFromUri(Uri uri) {
+            return Long.parseLong(uri.getPathSegments().get(2));
+        }
+
+        public static long getStartDateFromUri(Uri uri) {
+            String dateString = uri.getQueryParameter(COLUMN_DATE);
+            if (null != dateString && dateString.length() > 0)
+                return Long.parseLong(dateString);
+            else
+                return 0;
+        }
     }
 
     /* Inner class that defines the contents of the EventPlayer table */
