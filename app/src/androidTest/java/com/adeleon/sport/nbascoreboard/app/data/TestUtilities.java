@@ -46,10 +46,10 @@ public class TestUtilities extends AndroidTestCase {
     }
 
 
-    static ContentValues createEventValues(long teamAwayRowId, long teamHomeRowId) {
+    static ContentValues createEventValues() {
         ContentValues eventValues = new ContentValues();
-        eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_TEAM_ID_KEY , teamAwayRowId);
-        eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_TEAM_ID_KEY, teamHomeRowId);
+        eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_TEAM_ID_KEY , "charlotte-hornets");
+        eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_TEAM_ID_KEY, "washington-wizards");
         eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_ID , "20150327-charlotte-hornets-at-washington-wizards");
         eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_STATUS , "completed");
         eventValues.put(ScoreboardContract.EventEntry.COLUMN_START_DATE_TIME , "2015-03-27T19:00:00-04:00");

@@ -30,10 +30,10 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
+
         final String SQL_CREATE_TEAM_TABLE = "CREATE TABLE " + TeamEntry.TABLE_NAME + " (" +
-                TeamEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "+
-                TeamEntry.COLUMN_TEAM_ID + " TEXT  NOT NULL, " +
-                TeamEntry.COLUMN_FIRST_NAME_TEAM +  " TEXT NOT NULL," +
+                TeamEntry.COLUMN_TEAM_ID + " TEXT PRIMARY KEY  NOT NULL, " +
+                TeamEntry.COLUMN_FIRST_NAME_TEAM +  " TEXT NOT NULL, " +
                 TeamEntry.COLUMN_LAST_NAME_TEAM + " TEXT NOT NULL, " +
                 TeamEntry.COLUMN_ABBREVIATION + " TEXT NOT NULL, " +
                 TeamEntry.COLUMN_SITE_NAME + " TEXT, " +
@@ -43,7 +43,7 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
 
 
         final String SQL_CREATE_EVENT_TABLE = "CREATE TABLE " + EventEntry.TABLE_NAME + " (" +
-                EventEntry.COLUMN_EVENT_ID + " TEXT PRIMARY KEY," +
+                EventEntry.COLUMN_EVENT_ID + " TEXT PRIMARY KEY NOT NULL," +
                 EventEntry.COLUMN_START_DATE_TIME +  " TEXT  NOT NULL," +
                 EventEntry.COLUMN_EVENT_STATUS + " TEXT NOT NULL, " +
                 EventEntry.COLUMN_AWAY_TEAM_ID_KEY + " TEXT NOT NULL, " +
@@ -57,15 +57,14 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
                 EventEntry.COLUMN_HOME_PERIOD_THIRD + " INTEGER, " +
                 EventEntry.COLUMN_HOME_PERIOD_FOURTH + " INTEGER, " +
                 " FOREIGN KEY (" + EventEntry.COLUMN_AWAY_TEAM_ID_KEY + ") REFERENCES " +
-                TeamEntry.TABLE_NAME + " (" + TeamEntry._ID + "), " +
+                TeamEntry.TABLE_NAME + " (" + TeamEntry.COLUMN_TEAM_ID + "), " +
                 " FOREIGN KEY (" + EventEntry.COLUMN_HOME_TEAM_ID_KEY + ") REFERENCES " +
-                TeamEntry.TABLE_NAME + " (" + TeamEntry._ID + "), " +
+                TeamEntry.TABLE_NAME + " (" + TeamEntry.COLUMN_TEAM_ID + "), " +
                 " UNIQUE (" + EventEntry.COLUMN_START_DATE_TIME + ", " +
                 EventEntry.COLUMN_EVENT_ID + ", "+EventEntry.COLUMN_EVENT_STATUS +" ) ON CONFLICT REPLACE);";
 
 
         final String SQL_CREATE_EVENT_PLAYER_TABLE = "CREATE TABLE " + EventPlayerEntry.TABLE_NAME + " (" +
-
                 EventPlayerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 EventPlayerEntry.COLUMN_EVENT_ID_KEY + " TEXT NOT NULL, " +
                 EventPlayerEntry.COLUMN_TEAM_ID_KEY + " TEXT NOT NULL," +
@@ -79,9 +78,9 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
                 EventPlayerEntry.COLUMN_REBOUNDS + " INTEGER NOT NULL, " +
                 // Set up the location column as a foreign key to location table.
                 " FOREIGN KEY (" + EventPlayerEntry.COLUMN_EVENT_ID_KEY + ") REFERENCES " +
-                EventEntry.TABLE_NAME + " (" + EventEntry._ID + "), " +
+                EventEntry.TABLE_NAME + " (" + EventEntry.COLUMN_EVENT_ID + "), " +
                 " FOREIGN KEY (" + EventPlayerEntry.COLUMN_TEAM_ID_KEY + ") REFERENCES " +
-                TeamEntry.TABLE_NAME + " (" + TeamEntry._ID + "), " +
+                TeamEntry.TABLE_NAME + " (" + TeamEntry.COLUMN_TEAM_ID + "), " +
 
                 // To assure the application have just one weather entry per day
                 // per location, it's created a UNIQUE constraint with REPLACE strategy
@@ -94,6 +93,7 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_TEAM_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_EVENT_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_EVENT_PLAYER_TABLE);
+
     }
 
     @Override
@@ -109,4 +109,16 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + EventPlayerEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        if (!db.isReadOnly()) {
+            // Enable foreign key constraints
+            db.execSQL("PRAGMA foreign_keys=ON;");
+        }
+
+    }
+
+
 }

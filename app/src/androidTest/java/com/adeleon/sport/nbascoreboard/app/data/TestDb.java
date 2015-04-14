@@ -112,7 +112,7 @@ public class TestDb extends AndroidTestCase {
         ScoreboardDbHelper dbHelper = new ScoreboardDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        ContentValues scoreValues = TestUtilities.createEventValues(teamAwayRowId,teamHomeRowId);
+        ContentValues scoreValues = TestUtilities.createEventValues();
 
         long eventRowId = db.insert(ScoreboardContract.EventEntry.TABLE_NAME, null, scoreValues);
         assertTrue(eventRowId != -1);
