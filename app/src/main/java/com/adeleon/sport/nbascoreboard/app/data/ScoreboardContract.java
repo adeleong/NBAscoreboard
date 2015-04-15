@@ -1,9 +1,8 @@
 package com.adeleon.sport.nbascoreboard.app.data;
 
-import android.provider.BaseColumns;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.net.Uri;
+import android.provider.BaseColumns;
 
 /**
  * Created by theade on 3/31/2015.
@@ -76,30 +75,30 @@ public class ScoreboardContract {
         public static final String COLUMN_HOME_PERIOD_THIRD = "home_period_third";
         public static final String COLUMN_HOME_PERIOD_FOURTH = "home_period_fourth";
 
-        public static Uri buildWeatherUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
+        public static Uri buildEvetUri(String EventId) {
+            return CONTENT_URI.buildUpon().appendPath(EventId).build();
         }
 
         /*
             Student: Fill in this buildWeatherLocation function
          */
-        public static Uri buildWeatherLocation(String locationSetting) {
-            return null;
+        public static Uri buildEventTeam(String teamId) {
+            return CONTENT_URI.buildUpon().appendPath(teamId).build();
         }
 
-        public static Uri buildWeatherLocationWithStartDate(
+       /* public static Uri buildWeatherLocationWithStartDate(
                 String locationSetting, long startDate) {
             long normalizedDate = normalizeDate(startDate);
             return CONTENT_URI.buildUpon().appendPath(locationSetting)
                     .appendQueryParameter(COLUMN_DATE, Long.toString(normalizedDate)).build();
+        }*/
+
+        public static Uri buildEventTeamWithStartDate(String teamId, String StartDate) {
+            return CONTENT_URI.buildUpon().appendPath(teamId)
+                    .appendPath(StartDate).build();
         }
 
-        public static Uri buildWeatherLocationWithDate(String locationSetting, long date) {
-            return CONTENT_URI.buildUpon().appendPath(locationSetting)
-                    .appendPath(Long.toString(normalizeDate(date))).build();
-        }
-
-        public static String getLocationSettingFromUri(Uri uri) {
+        public static String getTeamSettingFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
         }
 
@@ -107,12 +106,12 @@ public class ScoreboardContract {
             return Long.parseLong(uri.getPathSegments().get(2));
         }
 
-        public static long getStartDateFromUri(Uri uri) {
-            String dateString = uri.getQueryParameter(COLUMN_DATE);
-            if (null != dateString && dateString.length() > 0)
+        public static String getStartDateFromUri(Uri uri) {
+            String dateString = uri.getQueryParameter(COLUMN_START_DATE_TIME);
+            /*if (null != dateString && dateString.length() > 0)
                 return Long.parseLong(dateString);
-            else
-                return 0;
+            else*/
+                return dateString;// 0;
         }
     }
 
