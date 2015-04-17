@@ -34,11 +34,15 @@ public class ScoreboardProvider extends ContentProvider {
         //weather INNER JOIN Team ON weather.Team_id = Team._id
         sWeatherByTeamSettingQueryBuilder.setTables(
                 ScoreboardContract.EventEntry.TABLE_NAME + " INNER JOIN " +
-                        ScoreboardContract.TeamEntry.TABLE_NAME +
+                        ScoreboardContract.TeamEntry.TABLE_NAME +" AWAY_TEAM " +
                         " ON " + ScoreboardContract.EventEntry.TABLE_NAME +
                         "." + ScoreboardContract.EventEntry.COLUMN_AWAY_TEAM_ID_KEY +
-                        " = " + ScoreboardContract.TeamEntry.TABLE_NAME +
-                        "." + ScoreboardContract.TeamEntry.COLUMN_TEAM_ID );
+                        " = " + " AWAY_TEAM" +
+                        "." + ScoreboardContract.TeamEntry.COLUMN_TEAM_ID
+                        + " INNER JOIN " + ScoreboardContract.TeamEntry.TABLE_NAME
+                        +" HOME_TEAM " +" ON "+ " HOME_TEAM."+ScoreboardContract.TeamEntry.COLUMN_TEAM_ID+
+                         " = "+ ScoreboardContract.EventEntry.COLUMN_HOME_TEAM_ID_KEY
+                           );
     }
 
     //Team.Team_setting = ?
@@ -176,14 +180,29 @@ public class ScoreboardProvider extends ContentProvider {
                 retCursor = getEventByTeamSetting(uri, projection, sortOrder);
                 break;
             }
-            // "weather"
+            // "event"
             case EVENT: {
-                retCursor = null;
+                retCursor  = mOpenHelper.getReadableDatabase().query(
+                        ScoreboardContract.EventEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
                 break;
             }
             // "Team"
             case TEAM: {
-                retCursor = null;
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        ScoreboardContract.TeamEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
                 break;
             }
 
