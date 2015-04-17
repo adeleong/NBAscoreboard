@@ -294,7 +294,8 @@ public class TestProvider extends AndroidTestCase {
     // in your provider.  It relies on insertions with testInsertReadProvider, so insert and
     // query functionality must also be complete before this test can be used.
     public void testInsertReadProvider() {
-        ContentValues testValues = TestUtilities.createNorthPoleLocationValues();
+        ContentValues testValues = TestUtilities.createAwayTeamValues();
+        ContentValues testHomeValues = TestUtilities.createHomeTeamValues();
 
         // Register a content observer for our insert.  This time, directly with the content resolver
         TestUtilities.TestContentObserver tco = TestUtilities.getTestContentObserver();
@@ -327,7 +328,7 @@ public class TestProvider extends AndroidTestCase {
                 cursor, testValues);
 
         // Fantastic.  Now that we have a location, add some weather!
-        ContentValues weatherValues = TestUtilities.createWeatherValues(locationRowId);
+        ContentValues weatherValues = TestUtilities.createEventValues();
         // The TestContentObserver is a one-shot class
         tco = TestUtilities.getTestContentObserver();
 
@@ -361,7 +362,7 @@ public class TestProvider extends AndroidTestCase {
 
         // Get the joined Weather and Location data
         weatherCursor = mContext.getContentResolver().query(
-                EventEntry.buildWeatherLocation(TestUtilities.TEST_LOCATION),
+                EventEntry.buildEventTeam(TestUtilities.TEST_LOCATION),
                 null, // leaving "columns" null just returns all the columns.
                 null, // cols for "where" clause
                 null, // values for "where" clause
@@ -372,7 +373,7 @@ public class TestProvider extends AndroidTestCase {
 
         // Get the joined Weather and Location data with a start date
         weatherCursor = mContext.getContentResolver().query(
-                EventEntry.buildWeatherLocationWithStartDate(
+                EventEntry.buildEventTeamWithStartDate(
                         TestUtilities.TEST_LOCATION, TestUtilities.TEST_DATE),
                 null, // leaving "columns" null just returns all the columns.
                 null, // cols for "where" clause
@@ -384,7 +385,7 @@ public class TestProvider extends AndroidTestCase {
 
         // Get the joined Weather data for a specific date
         weatherCursor = mContext.getContentResolver().query(
-                EventEntry.buildWeatherLocationWithDate(TestUtilities.TEST_LOCATION, TestUtilities.TEST_DATE),
+                EventEntry.buildEventTeamWithStartDate(TestUtilities.TEST_LOCATION, TestUtilities.TEST_DATE),
                 null,
                 null,
                 null,
