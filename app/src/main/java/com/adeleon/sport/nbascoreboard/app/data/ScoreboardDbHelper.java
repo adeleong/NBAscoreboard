@@ -44,7 +44,8 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
 
         final String SQL_CREATE_EVENT_TABLE = "CREATE TABLE " + EventEntry.TABLE_NAME + " (" +
                 EventEntry.COLUMN_EVENT_ID + " TEXT PRIMARY KEY NOT NULL," +
-                EventEntry.COLUMN_START_DATE_TIME +  " TEXT  NOT NULL," +
+                EventEntry.COLUMN_EVENT_DATE +" TEXT  NOT NULL, " +
+                EventEntry.COLUMN_START_DATE_TIME +  " TEXT  NOT NULL, " +
                 EventEntry.COLUMN_EVENT_STATUS + " TEXT NOT NULL, " +
                 EventEntry.COLUMN_AWAY_TEAM_ID_KEY + " TEXT NOT NULL, " +
                 EventEntry.COLUMN_HOME_TEAM_ID_KEY + " TEXT NOT NULL, " +

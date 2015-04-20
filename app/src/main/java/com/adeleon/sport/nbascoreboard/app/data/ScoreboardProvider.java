@@ -8,11 +8,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract.*;
+import java.util.HashMap;
 
 /**
  * Created by theade on 4/13/2015.
  */
-     
 
 public class ScoreboardProvider extends ContentProvider {
 
@@ -21,63 +22,78 @@ public class ScoreboardProvider extends ContentProvider {
     private ScoreboardDbHelper mOpenHelper;
 
     static final int EVENT = 100;
-    static final int EVENT_WITH_TEAM = 101;
-    static final int EVENT_WITH_TEAM_AND_DATE = 102;
+    static final int EVENT_WITH_EVENT_ID_AND_EVENT_DATE = 101;
+    static final int EVENT_WITH_EVENT_DATE = 102;
     static final int TEAM = 300;
 
-    private static final SQLiteQueryBuilder sWeatherByTeamSettingQueryBuilder;
+    static final String AWAY_TEAM = "away_team";
+    static final String HOME_TEAM = "home_team";
+    private static  HashMap<String, String> sEventTeamProjectionMap;
+
+    private static final SQLiteQueryBuilder sEventByDateQueryBuilder;
 
     static{
-        sWeatherByTeamSettingQueryBuilder = new SQLiteQueryBuilder();
+        sEventByDateQueryBuilder = new SQLiteQueryBuilder();
+
+        sEventTeamProjectionMap = new HashMap<String, String>();
+        sEventTeamProjectionMap.put(EventEntry.COLUMN_EVENT_ID, EventEntry.COLUMN_EVENT_ID);
+        sEventTeamProjectionMap.put(EventEntry.COLUMN_EVENT_DATE, EventEntry.COLUMN_EVENT_DATE);
+        sEventTeamProjectionMap.put(EventEntry.COLUMN_START_DATE_TIME, EventEntry.COLUMN_START_DATE_TIME);
+        sEventTeamProjectionMap.put(EventEntry.COLUMN_EVENT_STATUS, EventEntry.COLUMN_EVENT_STATUS);
+        sEventTeamProjectionMap.put(EventEntry.COLUMN_AWAY_TEAM_ID_KEY, EventEntry.COLUMN_AWAY_TEAM_ID_KEY);
+        sEventTeamProjectionMap.put(EventEntry.COLUMN_HOME_TEAM_ID_KEY, EventEntry.COLUMN_HOME_TEAM_ID_KEY);
+        sEventTeamProjectionMap.put(EventEntry.COLUMN_AWAY_PERIOD_FIRTS, EventEntry.COLUMN_AWAY_PERIOD_FIRTS);
+        sEventTeamProjectionMap.put(EventEntry.COLUMN_AWAY_PERIOD_SECOND, EventEntry.COLUMN_AWAY_PERIOD_SECOND);
+        sEventTeamProjectionMap.put(EventEntry.COLUMN_AWAY_PERIOD_THIRD, EventEntry.COLUMN_AWAY_PERIOD_THIRD);
+        sEventTeamProjectionMap.put(EventEntry.COLUMN_AWAY_PERIOD_FOURTH, EventEntry.COLUMN_AWAY_PERIOD_FOURTH);
+        sEventTeamProjectionMap.put(EventEntry.COLUMN_HOME_PERIOD_FIRTS, EventEntry.COLUMN_HOME_PERIOD_FIRTS);
+        sEventTeamProjectionMap.put(EventEntry.COLUMN_HOME_PERIOD_SECOND, EventEntry.COLUMN_HOME_PERIOD_SECOND);
+        sEventTeamProjectionMap.put(EventEntry.COLUMN_HOME_PERIOD_THIRD, EventEntry.COLUMN_HOME_PERIOD_THIRD);
+        sEventTeamProjectionMap.put(EventEntry.COLUMN_HOME_PERIOD_FOURTH, EventEntry.COLUMN_HOME_PERIOD_FOURTH);
+
+        sEventTeamProjectionMap.put(AWAY_TEAM+"."+TeamEntry.COLUMN_FIRST_NAME_TEAM , AWAY_TEAM+"."+TeamEntry.COLUMN_FIRST_NAME_TEAM );
+        sEventTeamProjectionMap.put(AWAY_TEAM+"."+TeamEntry.COLUMN_LAST_NAME_TEAM , AWAY_TEAM+"."+TeamEntry.COLUMN_LAST_NAME_TEAM );
+        sEventTeamProjectionMap.put(AWAY_TEAM+"."+TeamEntry.COLUMN_ABBREVIATION , AWAY_TEAM+"."+TeamEntry.COLUMN_ABBREVIATION );
+
+        sEventTeamProjectionMap.put(HOME_TEAM+"."+TeamEntry.COLUMN_FIRST_NAME_TEAM , HOME_TEAM+"."+TeamEntry.COLUMN_FIRST_NAME_TEAM );
+        sEventTeamProjectionMap.put(HOME_TEAM+"."+TeamEntry.COLUMN_LAST_NAME_TEAM , HOME_TEAM+"."+TeamEntry.COLUMN_LAST_NAME_TEAM );
+        sEventTeamProjectionMap.put(HOME_TEAM+"."+TeamEntry.COLUMN_ABBREVIATION , HOME_TEAM+"."+TeamEntry.COLUMN_ABBREVIATION );
 
         //This is an inner join which looks like
-        //weather INNER JOIN Team ON weather.Team_id = Team._id
-        sWeatherByTeamSettingQueryBuilder.setTables(
+
+        sEventByDateQueryBuilder.setTables(
                 ScoreboardContract.EventEntry.TABLE_NAME + " INNER JOIN " +
-                        ScoreboardContract.TeamEntry.TABLE_NAME +" AWAY_TEAM " +
+                        ScoreboardContract.TeamEntry.TABLE_NAME +" "+AWAY_TEAM +
                         " ON " + ScoreboardContract.EventEntry.TABLE_NAME +
                         "." + ScoreboardContract.EventEntry.COLUMN_AWAY_TEAM_ID_KEY +
-                        " = " + " AWAY_TEAM" +
+                        " = " +AWAY_TEAM +
                         "." + ScoreboardContract.TeamEntry.COLUMN_TEAM_ID
                         + " INNER JOIN " + ScoreboardContract.TeamEntry.TABLE_NAME
-                        +" HOME_TEAM " +" ON "+ " HOME_TEAM."+ScoreboardContract.TeamEntry.COLUMN_TEAM_ID+
-                         " = "+ ScoreboardContract.EventEntry.COLUMN_HOME_TEAM_ID_KEY
+                        +" "+HOME_TEAM  +" ON "+HOME_TEAM+"."+ScoreboardContract.TeamEntry.COLUMN_TEAM_ID+
+                         " = "+ ScoreboardContract.EventEntry.TABLE_NAME +
+                         "."+ScoreboardContract.EventEntry.COLUMN_HOME_TEAM_ID_KEY
                            );
+        sEventByDateQueryBuilder.setProjectionMap(sEventTeamProjectionMap);
     }
 
-    //Team.Team_setting = ?
-    private static final String sTeamSettingSelection =
-            ScoreboardContract.TeamEntry.TABLE_NAME+
-                    "." + ScoreboardContract.TeamEntry.COLUMN_TEAM_ID + " = ? ";
+    //Event.Event_date = ?
+    private static final String sEventListByEventDateSelection =
+            ScoreboardContract.EventEntry.TABLE_NAME+
+                    "." + EventEntry.COLUMN_EVENT_DATE + " = ? ";
 
-    //Team.Team_setting = ? AND date >= ?
-    private static final String sTeamSettingWithStartDateSelection =
-            ScoreboardContract.TeamEntry.TABLE_NAME+
-                    "." + ScoreboardContract.TeamEntry.COLUMN_TEAM_ID + " = ? AND " +
-                    ScoreboardContract.EventEntry.COLUMN_START_DATE_TIME + " >= ? ";
+    private static final String sEventRowByEventIdAndDateSelection =
+            EventEntry.TABLE_NAME+
+                    "." + EventEntry.COLUMN_EVENT_ID + " = ? AND "+
+                     EventEntry.COLUMN_EVENT_DATE +" = ? ";
 
-    //Team.Team_setting = ? AND date = ?
-    private static final String sTeamSettingAndDaySelection =
-            ScoreboardContract.TeamEntry.TABLE_NAME +
-                    "." + ScoreboardContract.TeamEntry.COLUMN_TEAM_ID + " = ? AND " +
-                    ScoreboardContract.EventEntry.COLUMN_START_DATE_TIME + " = ? ";
+    private Cursor getEventByEventDate(Uri uri, String[] projection, String sortOrder) {
+        //String TeamSetting = ScoreboardContract.EventEntry.getTeamSettingFromUri(uri);
+        String EventDate = ScoreboardContract.EventEntry.getEventDateFromUri(uri);
 
-    private Cursor getEventByTeamSetting(Uri uri, String[] projection, String sortOrder) {
-        String TeamSetting = ScoreboardContract.EventEntry.getTeamSettingFromUri(uri);
-        String startDate = ScoreboardContract.EventEntry.getStartDateFromUri(uri);
+        String[] selectionArgs = new String[]{EventDate};
+        String selection = sEventListByEventDateSelection;
 
-        String[] selectionArgs;
-        String selection;
-
-        if (startDate.equals("")) {
-            selection = sTeamSettingSelection;
-            selectionArgs = new String[]{TeamSetting};
-        } else {
-            selectionArgs = new String[]{TeamSetting, startDate};
-            selection = sTeamSettingWithStartDateSelection;
-        }
-
-        return sWeatherByTeamSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+        return sEventByDateQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
                 selection,
                 selectionArgs,
@@ -87,27 +103,20 @@ public class ScoreboardProvider extends ContentProvider {
         );
     }
 
-    private Cursor getWeatherByTeamSettingAndDate(
+    private Cursor getEventByEventIdAndDate(
             Uri uri, String[] projection, String sortOrder) {
-        String TeamSetting = ScoreboardContract.EventEntry.getTeamSettingFromUri(uri);
-        long date = ScoreboardContract.EventEntry.getDateFromUri(uri);
-
-        return sWeatherByTeamSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+        String eventId = ScoreboardContract.EventEntry.getEventIdFromUri(uri);
+        String eventDate = ScoreboardContract.EventEntry.getEventIdDateFromUri(uri);
+        return sEventByDateQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
-                sTeamSettingAndDaySelection,
-                new String[]{TeamSetting, Long.toString(date)},
+                sEventRowByEventIdAndDateSelection,
+                new String[]{eventId,eventDate},
                 null,
                 null,
                 sortOrder
         );
     }
 
-    /*
-        Students: Here is where you need to create the UriMatcher. This UriMatcher will
-        match each URI to the WEATHER, EVENT_WITH_TEAM, EVENT_WITH_TEAM_AND_DATE,
-        and Team integer constants defined above.  You can test this by uncommenting the
-        testUriMatcher test within TestUriMatcher.
-     */
     static UriMatcher buildUriMatcher() {
         // I know what you're thinking.  Why create a UriMatcher when you can use regular
         // expressions instead?  Because you're not crazy, that's why.
@@ -120,8 +129,8 @@ public class ScoreboardProvider extends ContentProvider {
 
         // For each type of URI you want to add, create a corresponding code.
         matcher.addURI(authority, ScoreboardContract.PATH_EVENT, EVENT);
-        matcher.addURI(authority, ScoreboardContract.PATH_EVENT + "/*", EVENT_WITH_TEAM);
-        matcher.addURI(authority, ScoreboardContract.PATH_EVENT + "/*/*", EVENT_WITH_TEAM_AND_DATE);
+        matcher.addURI(authority, ScoreboardContract.PATH_EVENT + "/*/*", EVENT_WITH_EVENT_ID_AND_EVENT_DATE);
+        matcher.addURI(authority, ScoreboardContract.PATH_EVENT + "/*", EVENT_WITH_EVENT_DATE);
 
         matcher.addURI(authority, ScoreboardContract.PATH_TEAM, TEAM);
         return matcher;
@@ -149,14 +158,14 @@ public class ScoreboardProvider extends ContentProvider {
 
         switch (match) {
             // Student: Uncomment and fill out these two cases
-            case EVENT_WITH_TEAM_AND_DATE:
-                return ScoreboardContract.EventEntry.CONTENT_ITEM_TYPE;
-            case EVENT_WITH_TEAM:
-                return ScoreboardContract.EventEntry.CONTENT_TYPE;
+            case EVENT_WITH_EVENT_DATE:
+                return EventEntry.CONTENT_TYPE;
+            case EVENT_WITH_EVENT_ID_AND_EVENT_DATE:
+                return EventEntry.CONTENT_ITEM_TYPE;
             case EVENT:
-                return ScoreboardContract.EventEntry.CONTENT_TYPE;
+                return EventEntry.CONTENT_TYPE;
             case TEAM:
-                return ScoreboardContract.TeamEntry.CONTENT_TYPE;
+                return TeamEntry.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -169,15 +178,15 @@ public class ScoreboardProvider extends ContentProvider {
         // and query the database accordingly.
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
-            // "weather/*/*"
-            case EVENT_WITH_TEAM_AND_DATE:
+            // "event/*/*"
+            case EVENT_WITH_EVENT_DATE:
             {
-                retCursor = getWeatherByTeamSettingAndDate(uri, projection, sortOrder);
+                retCursor = getEventByEventDate(uri, projection, sortOrder);
                 break;
             }
-            // "weather/*"
-            case EVENT_WITH_TEAM: {
-                retCursor = getEventByTeamSetting(uri, projection, sortOrder);
+            // "event/*"
+            case EVENT_WITH_EVENT_ID_AND_EVENT_DATE: {
+                retCursor = getEventByEventIdAndDate(uri, projection, sortOrder);
                 break;
             }
             // "event"
@@ -227,7 +236,15 @@ public class ScoreboardProvider extends ContentProvider {
                 //normalizeDate(values);ade
                 long _id = db.insert(ScoreboardContract.EventEntry.TABLE_NAME, null, values);
                 if ( _id > 0 )
-                    returnUri = ScoreboardContract.EventEntry.buildEvetUri("20150327-detroit-pistons-at-orlando-magic"); //temporar
+                    returnUri = ScoreboardContract.EventEntry.buildEvetIdAndDateUri("20150327-charlotte-hornets-at-washington-wizards", "2015-03-27T00:00:00-04:00"); //temporar
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
+            case TEAM: {
+                long _id = db.insert(ScoreboardContract.TeamEntry.TABLE_NAME, null, values);
+                if ( _id > 0 )
+                    returnUri = ScoreboardContract.TeamEntry.buildTeamUri("charlotte-hornets"); //temporal
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
@@ -241,18 +258,28 @@ public class ScoreboardProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        // Student: Start by getting a writable database
-
-        // Student: Use the uriMatcher to match the WEATHER and Team URI's we are going to
-        // handle.  If it doesn't match these, throw an UnsupportedOperationException.
-
-        // Student: A null value deletes all rows.  In my implementation of this, I only notified
-        // the uri listeners (using the content resolver) if the rowsDeleted != 0 or the selection
-        // is null.
-        // Oh, and you should notify the listeners here.
-
-        // Student: return the actual rows deleted
-        return 0;
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int rowsDeleted;
+        // this makes delete all rows return the number of rows deleted
+        if ( null == selection ) selection = "1";
+        switch (match) {
+            case EVENT:
+                rowsDeleted = db.delete(
+                        EventEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case TEAM:
+                rowsDeleted = db.delete(
+                        TeamEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        // Because a null deletes all rows
+        if (rowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsDeleted;
     }
 
   /*ade  private void normalizeDate(ContentValues values) {
@@ -266,9 +293,27 @@ public class ScoreboardProvider extends ContentProvider {
     @Override
     public int update(
             Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        // Student: This is a lot like the delete function.  We return the number of rows impacted
-        // by the update.
-        return 0;
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int rowsUpdated;
+
+        switch (match) {
+            case EVENT:
+                //normalizeDate(values);
+                rowsUpdated = db.update(EventEntry.TABLE_NAME, values, selection,
+                        selectionArgs);
+                break;
+            case TEAM:
+                rowsUpdated = db.update(TeamEntry.TABLE_NAME, values, selection,
+                        selectionArgs);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        if (rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsUpdated;
     }
 
     @Override

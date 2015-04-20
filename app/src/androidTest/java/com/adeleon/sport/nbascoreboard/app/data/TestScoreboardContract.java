@@ -15,20 +15,20 @@ public class TestScoreboardContract extends AndroidTestCase {
 
     // intentionally includes a slash to make sure Uri is getting quoted correctly
     private static final String TEST_SCORE_TEAM = "/charlotte-hornets";
-    private static final String TEST_SCORE_DATE = "2015-03-27T19:00:00-04:00";
+    private static final String TEST_EVENT_DATE = "2015-03-27T00:00:00-04:00";
 
     /*
         Students: Uncomment this out to test your weather location function.
      */
     public void testBuildEventTeam() {
-        Uri teamUri = ScoreboardContract.EventEntry.buildEventTeam(TEST_SCORE_TEAM);
+        Uri eventUri = ScoreboardContract.EventEntry.buildEventDate(TEST_EVENT_DATE);
         assertNotNull("Error: Null Uri returned.  You must fill-in BuildEventTeam in " +
                         "ScoreboardContract.",
-                teamUri);
+                eventUri);
         assertEquals("Error: Event team not properly appended to the end of the Uri",
-                TEST_SCORE_TEAM, teamUri.getLastPathSegment());
-        assertEquals("Error: Event team Uri doesn't match our expected result",
-                teamUri.toString(),
-                "content://com.adeleon.sport.nbascoreboard.app/event/%2Fcharlotte-hornets");
+                TEST_EVENT_DATE, eventUri.getLastPathSegment());
+        assertEquals("Error: Event Id and Date Uri doesn't match our expected result",
+                eventUri.toString(),
+                "content://com.adeleon.sport.nbascoreboard.app/event/2015-03-27T00%3A00%3A00-04%3A00");
     }
 }

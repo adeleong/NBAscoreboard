@@ -40,9 +40,9 @@ public class TestUtilities extends AndroidTestCase {
             assertFalse("Column '" + columnName + "' not found. " + error, idx == -1);
             String expectedValue = entry.getValue().toString();
             assertEquals("Value '" + entry.getValue().toString() +
-                    "' did not match the expected value '" +
-                    expectedValue + "'. " + error, expectedValue, valueCursor.getString(idx));
-        }
+                "' did not match the expected value '" +
+                expectedValue + "'. " + error, expectedValue, valueCursor.getString(idx));
+    }
     }
 
 
@@ -51,6 +51,7 @@ public class TestUtilities extends AndroidTestCase {
         eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_TEAM_ID_KEY , "charlotte-hornets");
         eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_TEAM_ID_KEY, "washington-wizards");
         eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_ID , "20150327-charlotte-hornets-at-washington-wizards");
+        eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_DATE , "2015-03-27T00:00:00-04:00");
         eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_STATUS , "completed");
         eventValues.put(ScoreboardContract.EventEntry.COLUMN_START_DATE_TIME , "2015-03-27T19:00:00-04:00");
         eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_FIRTS , 30);

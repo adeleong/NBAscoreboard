@@ -47,6 +47,9 @@ public class ScoreboardContract {
         /*public static Uri buildTeamUri(String teamId) {
                return ContentUris.withAppendedId(CONTENT_URI, teamId);
         }*/
+        public static Uri buildTeamUri(String teamId) {
+            return CONTENT_URI.buildUpon().appendPath(teamId).build();
+        }
 
     }
 
@@ -62,6 +65,7 @@ public class ScoreboardContract {
 
         public static final String TABLE_NAME = "event";
         public static final String COLUMN_EVENT_ID = "event_id";
+        public static final String COLUMN_EVENT_DATE = "event_date";
         public static final String COLUMN_START_DATE_TIME = "start_date_time";
         public static final String COLUMN_EVENT_STATUS = "event_status";
         public static final String COLUMN_AWAY_TEAM_ID_KEY = "away_team_id";
@@ -75,15 +79,13 @@ public class ScoreboardContract {
         public static final String COLUMN_HOME_PERIOD_THIRD = "home_period_third";
         public static final String COLUMN_HOME_PERIOD_FOURTH = "home_period_fourth";
 
-        public static Uri buildEvetUri(String EventId) {
-            return CONTENT_URI.buildUpon().appendPath(EventId).build();
+        public static Uri buildEvetIdAndDateUri(String EventId, String eventDate) {
+            return CONTENT_URI.buildUpon().appendPath(EventId)
+                    .appendPath(eventDate).build();
         }
 
-        /*
-            Student: Fill in this buildWeatherLocation function
-         */
-        public static Uri buildEventTeam(String teamId) {
-            return CONTENT_URI.buildUpon().appendPath(teamId).build();
+        public static Uri buildEventDate(String eventDate) {
+            return CONTENT_URI.buildUpon().appendPath(eventDate).build();
         }
 
        /* public static Uri buildWeatherLocationWithStartDate(
@@ -93,25 +95,33 @@ public class ScoreboardContract {
                     .appendQueryParameter(COLUMN_DATE, Long.toString(normalizedDate)).build();
         }*/
 
-        public static Uri buildEventTeamWithStartDate(String teamId, String StartDate) {
-            return CONTENT_URI.buildUpon().appendPath(teamId)
+       /* public static Uri buildEventTeamWithStartDate(String EventId, String StartDate) {
+            return CONTENT_URI.buildUpon().appendPath(EventId)
                     .appendPath(StartDate).build();
-        }
+        }*/
 
         public static String getTeamSettingFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
         }
 
-        public static long getDateFromUri(Uri uri) {
-            return Long.parseLong(uri.getPathSegments().get(2));
+        public static String getEventIdFromUri(Uri uri) {
+            return uri.getPathSegments().get(1);
+        }
+
+        public static String getEventIdDateFromUri(Uri uri) {
+            return uri.getPathSegments().get(2);
+        }
+
+        public static String getEventDateFromUri(Uri uri) {
+            return uri.getPathSegments().get(1);
         }
 
         public static String getStartDateFromUri(Uri uri) {
             String dateString = uri.getQueryParameter(COLUMN_START_DATE_TIME);
-            /*if (null != dateString && dateString.length() > 0)
-                return Long.parseLong(dateString);
-            else*/
-                return dateString;// 0;
+            if (null != dateString && dateString.length() > 0)
+                return dateString;
+            else
+                return "n";// 0;
         }
     }
 
