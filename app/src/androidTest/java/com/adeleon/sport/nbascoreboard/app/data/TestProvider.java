@@ -265,7 +265,7 @@ public class TestProvider extends AndroidTestCase {
                 null    // sort order
         );
 
-        TestUtilities.validateCursor("testUpdateLocation.  Error validating location entry update.",
+        TestUtilities.validateCursor("testUpdateTeam.  Error validating team entry update.",
                 cursor, updatedValues);
 
         cursor.close();
@@ -390,93 +390,96 @@ public class TestProvider extends AndroidTestCase {
 
 
     static private final int BULK_INSERT_RECORDS_TO_INSERT = 10;
-    static ContentValues[] createBulkInsertWeatherValues(long locationRowId) {
-       // long currentTestDate = TestUtilities.TEST_DATE;
-        long millisecondsInADay = 1000*60*60*24;
+    static ContentValues[] createBulkInsertEventValues() {
+
         ContentValues[] returnContentValues = new ContentValues[BULK_INSERT_RECORDS_TO_INSERT];
 
-       /* for ( int i = 0; i < BULK_INSERT_RECORDS_TO_INSERT; i++, currentTestDate+= millisecondsInADay ) {
+        for ( int i = 0; i < BULK_INSERT_RECORDS_TO_INSERT; i++ ) {
             ContentValues weatherValues = new ContentValues();
-            weatherValues.put(ScoreboardContract.EventEntry.COLUMN_LOC_KEY, locationRowId);
-            weatherValues.put(ScoreboardContract.EventEntry.COLUMN_DATE, currentTestDate);
-            weatherValues.put(ScoreboardContract.EventEntry.COLUMN_DEGREES, 1.1);
-            weatherValues.put(ScoreboardContract.EventEntry.COLUMN_HUMIDITY, 1.2 + 0.01 * (float) i);
-            weatherValues.put(ScoreboardContract.EventEntry.COLUMN_PRESSURE, 1.3 - 0.01 * (float) i);
-            weatherValues.put(ScoreboardContract.EventEntry.COLUMN_MAX_TEMP, 75 + i);
-            weatherValues.put(ScoreboardContract.EventEntry.COLUMN_MIN_TEMP, 65 - i);
-            weatherValues.put(ScoreboardContract.EventEntry.COLUMN_SHORT_DESC, "Asteroids");
-            weatherValues.put(ScoreboardContract.EventEntry.COLUMN_WIND_SPEED, 5.5 + 0.2 * (float) i);
-            weatherValues.put(ScoreboardContract.EventEntry.COLUMN_WEATHER_ID, 321);
+            weatherValues.put(EventEntry.COLUMN_EVENT_ID, "20150327-charlotte-hornets-at-washington-wizards"+i);
+            weatherValues.put(EventEntry.COLUMN_EVENT_DATE, "2015-03-27T00:00:00-04:00");
+            weatherValues.put(EventEntry.COLUMN_EVENT_STATUS, "completed");
+            weatherValues.put(EventEntry.COLUMN_START_DATE_TIME, "2015-03-27T19:00:00-04:00");
+            weatherValues.put(EventEntry.COLUMN_AWAY_TEAM_ID_KEY, "charlotte-hornets");
+            weatherValues.put(EventEntry.COLUMN_HOME_TEAM_ID_KEY, "washington-wizards");
+            weatherValues.put(EventEntry.COLUMN_AWAY_PERIOD_FIRTS, 25 + i);
+            weatherValues.put(EventEntry.COLUMN_AWAY_PERIOD_SECOND, 30 + i);
+            weatherValues.put(EventEntry.COLUMN_AWAY_PERIOD_THIRD, 27 + i);
+            weatherValues.put(EventEntry.COLUMN_AWAY_PERIOD_FOURTH, 32+ i);
+            weatherValues.put(EventEntry.COLUMN_HOME_PERIOD_FIRTS, 29+ i);
+            weatherValues.put(EventEntry.COLUMN_HOME_PERIOD_SECOND, 16+ i);
+            weatherValues.put(EventEntry.COLUMN_HOME_PERIOD_THIRD, 13 + i);
+            weatherValues.put(EventEntry.COLUMN_HOME_PERIOD_FOURTH, 40+ i);
             returnContentValues[i] = weatherValues;
-        }*///ade
+        }
         return returnContentValues;
     }
 
-    // Student: Uncomment this test after you have completed writing the BulkInsert functionality
-    // in your provider.  Note that this test will work with the built-in (default) provider
-    // implementation, which just inserts records one-at-a-time, so really do implement the
-    // BulkInsert ContentProvider function.
-//    public void testBulkInsert() {
-//        // first, let's create a location value
-//        ContentValues testValues = TestUtilities.createNorthPoleLocationValues();
-//        Uri locationUri = mContext.getContentResolver().insert(TeamEntry.CONTENT_URI, testValues);
-//        long locationRowId = ContentUris.parseId(locationUri);
-//
-//        // Verify we got a row back.
-//        assertTrue(locationRowId != -1);
-//
-//        // Data's inserted.  IN THEORY.  Now pull some out to stare at it and verify it made
-//        // the round trip.
-//
-//        // A cursor is your primary interface to the query results.
-//        Cursor cursor = mContext.getContentResolver().query(
-//                TeamEntry.CONTENT_URI,
-//                null, // leaving "columns" null just returns all the columns.
-//                null, // cols for "where" clause
-//                null, // values for "where" clause
-//                null  // sort order
-//        );
-//
-//        TestUtilities.validateCursor("testBulkInsert. Error validating TeamEntry.",
-//                cursor, testValues);
-//
-//        // Now we can bulkInsert some weather.  In fact, we only implement BulkInsert for weather
-//        // entries.  With ContentProviders, you really only have to implement the features you
-//        // use, after all.
-//        ContentValues[] bulkInsertContentValues = createBulkInsertWeatherValues(locationRowId);
-//
-//        // Register a content observer for our bulk insert.
-//        TestUtilities.TestContentObserver weatherObserver = TestUtilities.getTestContentObserver();
-//        mContext.getContentResolver().registerContentObserver(EventEntry.CONTENT_URI, true, weatherObserver);
-//
-//        int insertCount = mContext.getContentResolver().bulkInsert(EventEntry.CONTENT_URI, bulkInsertContentValues);
-//
-//        // Students:  If this fails, it means that you most-likely are not calling the
-//        // getContext().getContentResolver().notifyChange(uri, null); in your BulkInsert
-//        // ContentProvider method.
-//        weatherObserver.waitForNotificationOrFail();
-//        mContext.getContentResolver().unregisterContentObserver(weatherObserver);
-//
-//        assertEquals(insertCount, BULK_INSERT_RECORDS_TO_INSERT);
-//
-//        // A cursor is your primary interface to the query results.
-//        cursor = mContext.getContentResolver().query(
-//                EventEntry.CONTENT_URI,
-//                null, // leaving "columns" null just returns all the columns.
-//                null, // cols for "where" clause
-//                null, // values for "where" clause
-//                EventEntry.COLUMN_DATE + " ASC"  // sort order == by DATE ASCENDING
-//        );
-//
-//        // we should have as many records in the database as we've inserted
-//        assertEquals(cursor.getCount(), BULK_INSERT_RECORDS_TO_INSERT);
-//
-//        // and let's make sure they match the ones we created
-//        cursor.moveToFirst();
-//        for ( int i = 0; i < BULK_INSERT_RECORDS_TO_INSERT; i++, cursor.moveToNext() ) {
-//            TestUtilities.validateCurrentRecord("testBulkInsert.  Error validating EventEntry " + i,
-//                    cursor, bulkInsertContentValues[i]);
-//        }
-//        cursor.close();
-//    }
+    public void testBulkInsert() {
+        // first, let's create a location value
+        ContentValues testValues = TestUtilities.createAwayTeamValues();
+        ContentValues testHomeValues = TestUtilities.createHomeTeamValues();
+
+        Uri TeamUri = mContext.getContentResolver().insert(TeamEntry.CONTENT_URI, testValues);
+        mContext.getContentResolver().insert(TeamEntry.CONTENT_URI, testHomeValues);
+
+        String teamRowId = "charlotte-hornets";  //ContentUris.parseId(locationUri);
+
+        // Verify we got a row back.
+        assertTrue(teamRowId != null);
+
+        // Data's inserted.  IN THEORY.  Now pull some out to stare at it and verify it made
+        // the round trip.
+
+        // A cursor is your primary interface to the query results.
+        Cursor cursor = mContext.getContentResolver().query(
+                TeamEntry.CONTENT_URI,
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null  // sort order
+        );
+
+        TestUtilities.validateCursor("testBulkInsert. Error validating TeamEntry.",
+                cursor, testValues);
+
+        // Now we can bulkInsert some weather.  In fact, we only implement BulkInsert for weather
+        // entries.  With ContentProviders, you really only have to implement the features you
+        // use, after all.
+        ContentValues[] bulkInsertContentValues = createBulkInsertEventValues();
+
+        // Register a content observer for our bulk insert.
+        TestUtilities.TestContentObserver weatherObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(EventEntry.CONTENT_URI, true, weatherObserver);
+
+        int insertCount = mContext.getContentResolver().bulkInsert(EventEntry.CONTENT_URI, bulkInsertContentValues);
+
+        // Students:  If this fails, it means that you most-likely are not calling the
+        // getContext().getContentResolver().notifyChange(uri, null); in your BulkInsert
+        // ContentProvider method.
+        weatherObserver.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(weatherObserver);
+
+        assertEquals(insertCount, BULK_INSERT_RECORDS_TO_INSERT);
+
+        // A cursor is your primary interface to the query results.
+        cursor = mContext.getContentResolver().query(
+                EventEntry.CONTENT_URI,
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                EventEntry.COLUMN_START_DATE_TIME + " ASC"  // sort order == by DATE ASCENDING
+        );
+
+        // we should have as many records in the database as we've inserted
+        assertEquals(cursor.getCount(), BULK_INSERT_RECORDS_TO_INSERT);
+
+        // and let's make sure they match the ones we created
+        cursor.moveToFirst();
+        for ( int i = 0; i < BULK_INSERT_RECORDS_TO_INSERT; i++, cursor.moveToNext() ) {
+            TestUtilities.validateCurrentRecord("testBulkInsert.  Error validating EventEntry " + i,
+                    cursor, bulkInsertContentValues[i]);
+        }
+        cursor.close();
+    }
 }
