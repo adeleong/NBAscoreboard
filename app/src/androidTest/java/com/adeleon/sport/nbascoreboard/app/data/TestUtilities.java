@@ -26,6 +26,9 @@ import java.util.Set;
  */
 public class TestUtilities extends AndroidTestCase {
 
+    static final String TEST_EVENT_ID =  "20150327-charlotte-hornets-at-washington-wizards";
+    static final String TEST_EVENT_DATE = "2015-03-27T00:00:00-04:00";
+
     static void validateCursor(String error, Cursor valueCursor, ContentValues expectedValues) {
         assertTrue("Empty cursor returned. " + error, valueCursor.moveToFirst());
         validateCurrentRecord(error, valueCursor, expectedValues);

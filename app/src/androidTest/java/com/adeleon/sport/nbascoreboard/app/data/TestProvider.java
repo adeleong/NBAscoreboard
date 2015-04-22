@@ -301,15 +301,15 @@ public class TestProvider extends AndroidTestCase {
                 cursor, testAwayValues);
 
         // Fantastic.  Now that we have a location, add some weather!
-    /*ade :TODO    ContentValues eventValues = TestUtilities.createEventValues();
+        ContentValues eventValues = TestUtilities.createEventValues(teamAwayRowId, teamHomeRowId);
         // The TestContentObserver is a one-shot class
         tco = TestUtilities.getTestContentObserver();
 
         mContext.getContentResolver().registerContentObserver(EventEntry.CONTENT_URI, true, tco);
 
-        Uri weatherInsertUri = mContext.getContentResolver()
+        Uri eventInsertUri = mContext.getContentResolver()
                 .insert(EventEntry.CONTENT_URI, eventValues);
-        assertTrue(weatherInsertUri != null);
+        assertTrue(eventInsertUri != null);
 
         tco.waitForNotificationOrFail();
         mContext.getContentResolver().unregisterContentObserver(tco);
@@ -332,7 +332,7 @@ public class TestProvider extends AndroidTestCase {
 
         // Get the joined Weather and Location data
         eventCursor = mContext.getContentResolver().query(
-                EventEntry.buildEventDate("2015-03-27T00:00:00-04:00"),
+                EventEntry.buildEventDate(TestUtilities.TEST_EVENT_DATE),
                 null, // leaving "columns" null just returns all the columns.
                 null, // cols for "where" clause
                 null, // values for "where" clause
@@ -340,18 +340,18 @@ public class TestProvider extends AndroidTestCase {
         );
        /* TestUtilities.validateCursor("testInsertReadProvider.  Error validating joined EVENT and team Data.",
                 eventCursor, eventValues);  pendiente disenar prueba*/
-        /*ade :TODO  int idx = eventCursor.getColumnIndex(EventEntry.COLUMN_EVENT_ID);
+        int idx = eventCursor.getColumnIndex(EventEntry.COLUMN_EVENT_ID);
 
         // Get the joined Event Id
         eventCursor = mContext.getContentResolver().query(
-                EventEntry.buildEvetIdAndDateUri ( "20150327-charlotte-hornets-at-washington-wizards","2015-03-27T00:00:00-04:00"),
+                EventEntry.buildEvetIdAndDateUri ( TestUtilities.TEST_EVENT_ID, TestUtilities.TEST_EVENT_DATE),
                 null, // leaving "columns" null just returns all the columns.
                 null, // cols for "where" clause
                 null, // values for "where" clause
                 null  // sort order
         );
 
-        int cantidadRow = eventCursor.getCount();*/
+        assertTrue(eventCursor.getCount() != -1);
         /*TestUtilities.validateCursor("testInsertReadProvider.  Error validating joined Weather and Location Data with start date.",
                 eventCursor, eventValues);*/
 
@@ -387,7 +387,7 @@ public class TestProvider extends AndroidTestCase {
 
 
     static private final int BULK_INSERT_RECORDS_TO_INSERT = 10;
-    static ContentValues[] createBulkInsertEventValues() {
+    static ContentValues[] createBulkInsertEventValues(long awayTeam,  long homeTeam) {
 
         ContentValues[] returnContentValues = new ContentValues[BULK_INSERT_RECORDS_TO_INSERT];
 
@@ -397,8 +397,8 @@ public class TestProvider extends AndroidTestCase {
             weatherValues.put(EventEntry.COLUMN_EVENT_DATE, "2015-03-27T00:00:00-04:00");
             weatherValues.put(EventEntry.COLUMN_EVENT_STATUS, "completed");
             weatherValues.put(EventEntry.COLUMN_START_DATE_TIME, "2015-03-27T19:00:00-04:00");
-            weatherValues.put(EventEntry.COLUMN_AWAY_TEAM_ID_KEY, "charlotte-hornets");
-            weatherValues.put(EventEntry.COLUMN_HOME_TEAM_ID_KEY, "washington-wizards");
+            weatherValues.put(EventEntry.COLUMN_AWAY_TEAM_ID_KEY, awayTeam);
+            weatherValues.put(EventEntry.COLUMN_HOME_TEAM_ID_KEY, homeTeam);
             weatherValues.put(EventEntry.COLUMN_AWAY_PERIOD_FIRTS, 25 + i);
             weatherValues.put(EventEntry.COLUMN_AWAY_PERIOD_SECOND, 30 + i);
             weatherValues.put(EventEntry.COLUMN_AWAY_PERIOD_THIRD, 27 + i);
@@ -414,12 +414,14 @@ public class TestProvider extends AndroidTestCase {
 
     public void testBulkInsert() {
         // first, let's create a location value
-        ContentValues testValues = TestUtilities.createAwayTeamValues();
+        ContentValues testAwayValues = TestUtilities.createAwayTeamValues();
         ContentValues testHomeValues = TestUtilities.createHomeTeamValues();
 
-        Uri TeamUri = mContext.getContentResolver().insert(TeamEntry.CONTENT_URI, testValues);
-        mContext.getContentResolver().insert(TeamEntry.CONTENT_URI, testHomeValues);
+        Uri awayTeamUri = mContext.getContentResolver().insert(TeamEntry.CONTENT_URI, testAwayValues);
+        Uri homeTeamUri =  mContext.getContentResolver().insert(TeamEntry.CONTENT_URI, testHomeValues);
 
+        long awayTeamRowId = ContentUris.parseId(awayTeamUri);
+        long homeTeamRowId = ContentUris.parseId(homeTeamUri);
         String teamRowId = "charlotte-hornets";  //ContentUris.parseId(locationUri);
 
         // Verify we got a row back.
@@ -438,12 +440,12 @@ public class TestProvider extends AndroidTestCase {
         );
 
         TestUtilities.validateCursor("testBulkInsert. Error validating TeamEntry.",
-                cursor, testValues);
+                cursor, testAwayValues);
 
         // Now we can bulkInsert some weather.  In fact, we only implement BulkInsert for weather
         // entries.  With ContentProviders, you really only have to implement the features you
         // use, after all.
-        ContentValues[] bulkInsertContentValues = createBulkInsertEventValues();
+        ContentValues[] bulkInsertContentValues = createBulkInsertEventValues(awayTeamRowId, homeTeamRowId);
 
         // Register a content observer for our bulk insert.
         TestUtilities.TestContentObserver weatherObserver = TestUtilities.getTestContentObserver();
