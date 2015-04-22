@@ -236,7 +236,7 @@ public class ScoreboardProvider extends ContentProvider {
                 //normalizeDate(values);ade
                 long _id = db.insert(ScoreboardContract.EventEntry.TABLE_NAME, null, values);
                 if ( _id > 0 )
-                    returnUri = ScoreboardContract.EventEntry.buildEvetIdAndDateUri("20150327-charlotte-hornets-at-washington-wizards", "2015-03-27T00:00:00-04:00"); //temporar
+                    returnUri = ScoreboardContract.EventEntry.buildEventUri(_id);// buildEvetIdAndDateUri("20150327-charlotte-hornets-at-washington-wizards", "2015-03-27T00:00:00-04:00"); //temporar
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
@@ -244,7 +244,7 @@ public class ScoreboardProvider extends ContentProvider {
             case TEAM: {
                 long _id = db.insert(ScoreboardContract.TeamEntry.TABLE_NAME, null, values);
                 if ( _id > 0 )
-                    returnUri = ScoreboardContract.TeamEntry.buildTeamUri("charlotte-hornets"); //temporal
+                    returnUri = ScoreboardContract.TeamEntry.buildTeamUri(_id);
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;

@@ -5,13 +5,16 @@ package com.adeleon.sport.nbascoreboard.app.data;
  */
 
 import android.content.ComponentName;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
 import android.test.AndroidTestCase;
+import android.util.Log;
 
 import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract.EventEntry;
 import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract.TeamEntry;
@@ -66,23 +69,16 @@ public class TestProvider extends AndroidTestCase {
         cursor.close();
     }
 
-
     public void deleteAllRecords() {
         deleteAllRecordsFromProvider();
     }
 
-    // Since we want each test to start with a clean slate, run deleteAllRecords
-    // in setUp (called by the test runner before each test).
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         deleteAllRecords();
     }
 
-    /*
-        This test checks to make sure that the content provider is registered correctly.
-        Students: Uncomment this test to make sure you've correctly registered the ScoreboardProvider.
-     */
     public void testProviderRegistry() {
         PackageManager pm = mContext.getPackageManager();
 
@@ -161,7 +157,7 @@ public class TestProvider extends AndroidTestCase {
         long teamHomeRowId = TestUtilities.insertTeamHomeValues(mContext);
 
         // Fantastic.  Now that we have a location, add some weather!
-        ContentValues eventValues = TestUtilities.createEventValues();
+        ContentValues eventValues = TestUtilities.createEventValues(teamAwayRowId,teamHomeRowId);
 
         long eventRowId = db.insert(EventEntry.TABLE_NAME, null, eventValues);
         assertTrue("Unable to Insert EventEntry into the Database", eventRowId != -1);
@@ -186,33 +182,33 @@ public class TestProvider extends AndroidTestCase {
         read out the data.  Uncomment this test to see if your location queries are
         performing correctly.
      */
-//    public void testBasicLocationQueries() {
-//        // insert our test records into the database
-//        ScoreboardDbHelper dbHelper = new ScoreboardDbHelper(mContext);
-//        SQLiteDatabase db = dbHelper.getWritableDatabase();
-//
-//        ContentValues testValues = TestUtilities.createNorthPoleLocationValues();
-//        long locationRowId = TestUtilities.insertNorthPoleLocationValues(mContext);
-//
-//        // Test the basic content provider query
-//        Cursor locationCursor = mContext.getContentResolver().query(
-//                TeamEntry.CONTENT_URI,
-//                null,
-//                null,
-//                null,
-//                null
-//        );
-//
-//        // Make sure we get the correct cursor out of the database
-//        TestUtilities.validateCursor("testBasicLocationQueries, location query", locationCursor, testValues);
-//
-//        // Has the NotificationUri been set correctly? --- we can only test this easily against API
-//        // level 19 or greater because getNotificationUri was added in API level 19.
-//        if ( Build.VERSION.SDK_INT >= 19 ) {
-//            assertEquals("Error: Location Query did not properly set NotificationUri",
-//                    locationCursor.getNotificationUri(), TeamEntry.CONTENT_URI);
-//        }
-//    }
+    public void testBasicLocationQueries() {
+        // insert our test records into the database
+        ScoreboardDbHelper dbHelper = new ScoreboardDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues testValues = TestUtilities.createAwayTeamValues();
+        long teamRowId = TestUtilities.insertTeamAwayValues(mContext);
+
+        // Test the basic content provider query
+        Cursor teamCursor = mContext.getContentResolver().query(
+                TeamEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+
+        // Make sure we get the correct cursor out of the database
+        TestUtilities.validateCursor("testBasicLocationQueries, location query", teamCursor, testValues);
+
+        // Has the NotificationUri been set correctly? --- we can only test this easily against API
+        // level 19 or greater because getNotificationUri was added in API level 19.
+        if ( Build.VERSION.SDK_INT >= 19 ) {
+            assertEquals("Error: Location Query did not properly set NotificationUri",
+                    teamCursor.getNotificationUri(), TeamEntry.CONTENT_URI);
+        }
+    }
 
     /*
         This test uses the provider to insert and then update the data. Uncomment this test to
@@ -220,18 +216,19 @@ public class TestProvider extends AndroidTestCase {
      */
     public void testUpdateTeam() {
         // Create a new map of values, where column names are the keys
-        ContentValues values = TestUtilities.createAwayTeamValues();
+        ContentValues awayValues = TestUtilities.createAwayTeamValues();
 
         Uri teamUri = mContext.getContentResolver().
-                insert(TeamEntry.CONTENT_URI, values);
-        String TeamRowId = "charlotte-hornets";
+                insert(TeamEntry.CONTENT_URI, awayValues);
+        long teamRowId = ContentUris.parseId(teamUri);
+       // String TeamRowId = "charlotte-hornets";
 
         // Verify we got a row back.
-        assertTrue(teamUri != null);
-        //Log.d(LOG_TAG, "New row id: " + locationRowId);
+        assertTrue(teamRowId != -1);
+        Log.d(LOG_TAG, "New row id: " + teamRowId);
 
-        ContentValues updatedValues = new ContentValues(values);
-        updatedValues.put(TeamEntry.COLUMN_TEAM_ID, TeamRowId);
+        ContentValues updatedValues = new ContentValues(awayValues);
+        updatedValues.put(TeamEntry._ID, teamRowId);
         updatedValues.put(TeamEntry.COLUMN_CITY, "Santa's Village");
 
         // Create a cursor with observer to make sure that the content provider is notifying
@@ -242,8 +239,8 @@ public class TestProvider extends AndroidTestCase {
         locationCursor.registerContentObserver(tco);
 
         int count = mContext.getContentResolver().update(
-                TeamEntry.CONTENT_URI, updatedValues, TeamEntry.COLUMN_TEAM_ID+ "= ?",
-                new String[] { TeamRowId});
+                TeamEntry.CONTENT_URI, updatedValues, TeamEntry._ID + "= ?",
+                new String[] { Long.toString(teamRowId)});
         assertEquals(count, 1);
 
         // Test to make sure our observer is called.  If not, we throw an assertion.
@@ -255,28 +252,22 @@ public class TestProvider extends AndroidTestCase {
         locationCursor.unregisterContentObserver(tco);
         locationCursor.close();
 
-        String[] selectionArgs = new String[]{TeamRowId};
+        ///String[] selectionArgs = new String[]{TeamRowId};
         // A cursor is your primary interface to the query results.
         Cursor cursor = mContext.getContentResolver().query(
                 TeamEntry.CONTENT_URI,
                 null,   // projection
-                TeamEntry.COLUMN_TEAM_ID + " = ? ",
-                selectionArgs,   // Values for the "where" clause
+                TeamEntry._ID + " = "+teamRowId,
+                null,   // Values for the "where" clause
                 null    // sort order
         );
 
-        TestUtilities.validateCursor("testUpdateLocation.  Error validating location entry update.",
+        TestUtilities.validateCursor("testUpdateTeam.  Error validating team entry update.",
                 cursor, updatedValues);
 
         cursor.close();
     }
 
-
-    // Make sure we can still delete after adding/updating stuff
-    //
-    // Student: Uncomment this test after you have completed writing the insert functionality
-    // in your provider.  It relies on insertions with testInsertReadProvider, so insert and
-    // query functionality must also be complete before this test can be used.
     public void testInsertReadProvider() {
         ContentValues testAwayValues = TestUtilities.createAwayTeamValues();
         ContentValues testHomeValues = TestUtilities.createHomeTeamValues();
@@ -291,6 +282,12 @@ public class TestProvider extends AndroidTestCase {
         tco.waitForNotificationOrFail();
         mContext.getContentResolver().unregisterContentObserver(tco);
 
+        long teamAwayRowId = ContentUris.parseId(TeamAwayUri);
+        long teamHomeRowId = ContentUris.parseId(TeamHomeUri);
+
+        assertTrue(teamAwayRowId != -1);
+        assertTrue(teamHomeRowId != -1);
+
         // A cursor is your primary interface to the query results.
         Cursor cursor = mContext.getContentResolver().query(
                 TeamEntry.CONTENT_URI,
@@ -304,7 +301,7 @@ public class TestProvider extends AndroidTestCase {
                 cursor, testAwayValues);
 
         // Fantastic.  Now that we have a location, add some weather!
-        ContentValues eventValues = TestUtilities.createEventValues();
+    /*ade :TODO    ContentValues eventValues = TestUtilities.createEventValues();
         // The TestContentObserver is a one-shot class
         tco = TestUtilities.getTestContentObserver();
 
@@ -343,7 +340,7 @@ public class TestProvider extends AndroidTestCase {
         );
        /* TestUtilities.validateCursor("testInsertReadProvider.  Error validating joined EVENT and team Data.",
                 eventCursor, eventValues);  pendiente disenar prueba*/
-          int idx = eventCursor.getColumnIndex(EventEntry.COLUMN_EVENT_ID);
+        /*ade :TODO  int idx = eventCursor.getColumnIndex(EventEntry.COLUMN_EVENT_ID);
 
         // Get the joined Event Id
         eventCursor = mContext.getContentResolver().query(
@@ -354,7 +351,7 @@ public class TestProvider extends AndroidTestCase {
                 null  // sort order
         );
 
-        int cantidadRow = eventCursor.getCount();
+        int cantidadRow = eventCursor.getCount();*/
         /*TestUtilities.validateCursor("testInsertReadProvider.  Error validating joined Weather and Location Data with start date.",
                 eventCursor, eventValues);*/
 

@@ -32,7 +32,8 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
 
 
         final String SQL_CREATE_TEAM_TABLE = "CREATE TABLE " + TeamEntry.TABLE_NAME + " (" +
-                TeamEntry.COLUMN_TEAM_ID + " TEXT PRIMARY KEY  NOT NULL, " +
+                TeamEntry._ID + " INTEGER PRIMARY KEY," +
+                TeamEntry.COLUMN_TEAM_ID + " TEXT  NOT NULL, " +
                 TeamEntry.COLUMN_FIRST_NAME_TEAM +  " TEXT NOT NULL, " +
                 TeamEntry.COLUMN_LAST_NAME_TEAM + " TEXT NOT NULL, " +
                 TeamEntry.COLUMN_ABBREVIATION + " TEXT NOT NULL, " +
@@ -43,12 +44,13 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
 
 
         final String SQL_CREATE_EVENT_TABLE = "CREATE TABLE " + EventEntry.TABLE_NAME + " (" +
-                EventEntry.COLUMN_EVENT_ID + " TEXT PRIMARY KEY NOT NULL," +
+                EventEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                EventEntry.COLUMN_EVENT_ID + " TEXT  NOT NULL," +
                 EventEntry.COLUMN_EVENT_DATE +" TEXT  NOT NULL, " +
                 EventEntry.COLUMN_START_DATE_TIME +  " TEXT  NOT NULL, " +
                 EventEntry.COLUMN_EVENT_STATUS + " TEXT NOT NULL, " +
-                EventEntry.COLUMN_AWAY_TEAM_ID_KEY + " TEXT NOT NULL, " +
-                EventEntry.COLUMN_HOME_TEAM_ID_KEY + " TEXT NOT NULL, " +
+                EventEntry.COLUMN_AWAY_TEAM_ID_KEY + " INTEGER NOT NULL, " +
+                EventEntry.COLUMN_HOME_TEAM_ID_KEY + " INTEGER NOT NULL, " +
                 EventEntry.COLUMN_AWAY_PERIOD_FIRTS + " INTEGER , " +
                 EventEntry.COLUMN_AWAY_PERIOD_SECOND + " INTEGER, " +
                 EventEntry.COLUMN_AWAY_PERIOD_THIRD + " INTEGER, " +
@@ -58,17 +60,17 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
                 EventEntry.COLUMN_HOME_PERIOD_THIRD + " INTEGER, " +
                 EventEntry.COLUMN_HOME_PERIOD_FOURTH + " INTEGER, " +
                 " FOREIGN KEY (" + EventEntry.COLUMN_AWAY_TEAM_ID_KEY + ") REFERENCES " +
-                TeamEntry.TABLE_NAME + " (" + TeamEntry.COLUMN_TEAM_ID + "), " +
+                TeamEntry.TABLE_NAME + " (" + TeamEntry._ID + "), " +
                 " FOREIGN KEY (" + EventEntry.COLUMN_HOME_TEAM_ID_KEY + ") REFERENCES " +
-                TeamEntry.TABLE_NAME + " (" + TeamEntry.COLUMN_TEAM_ID + "), " +
+                TeamEntry.TABLE_NAME + " (" + TeamEntry._ID + "), " +
                 " UNIQUE (" + EventEntry.COLUMN_START_DATE_TIME + ", " +
                 EventEntry.COLUMN_EVENT_ID + ", "+EventEntry.COLUMN_EVENT_STATUS +" ) ON CONFLICT REPLACE);";
 
 
         final String SQL_CREATE_EVENT_PLAYER_TABLE = "CREATE TABLE " + EventPlayerEntry.TABLE_NAME + " (" +
                 EventPlayerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                EventPlayerEntry.COLUMN_EVENT_ID_KEY + " TEXT NOT NULL, " +
-                EventPlayerEntry.COLUMN_TEAM_ID_KEY + " TEXT NOT NULL," +
+                EventPlayerEntry.COLUMN_EVENT_ID_KEY + " INTEGER NOT NULL, " +
+                EventPlayerEntry.COLUMN_TEAM_ID_KEY + " INTEGER NOT NULL," +
                 EventPlayerEntry.COLUMN_FIRST_NAME + " TEXT NOT NULL, " +
                 EventPlayerEntry.COLUMN_LAST_NAME + " TEXT NOT NULL, " +
                 EventPlayerEntry.COLUMN_POSITION + " TEXT NOT NULL, " +
@@ -79,9 +81,9 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
                 EventPlayerEntry.COLUMN_REBOUNDS + " INTEGER NOT NULL, " +
                 // Set up the location column as a foreign key to location table.
                 " FOREIGN KEY (" + EventPlayerEntry.COLUMN_EVENT_ID_KEY + ") REFERENCES " +
-                EventEntry.TABLE_NAME + " (" + EventEntry.COLUMN_EVENT_ID + "), " +
+                EventEntry.TABLE_NAME + " (" + EventEntry._ID + "), " +
                 " FOREIGN KEY (" + EventPlayerEntry.COLUMN_TEAM_ID_KEY + ") REFERENCES " +
-                TeamEntry.TABLE_NAME + " (" + TeamEntry.COLUMN_TEAM_ID + "), " +
+                TeamEntry.TABLE_NAME + " (" + TeamEntry._ID + "), " +
 
                 // To assure the application have just one weather entry per day
                 // per location, it's created a UNIQUE constraint with REPLACE strategy

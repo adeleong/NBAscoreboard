@@ -1,6 +1,7 @@
 package com.adeleon.sport.nbascoreboard.app.data;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -44,11 +45,8 @@ public class ScoreboardContract {
         public static final String COLUMN_CITY = "city";
         public static final String COLUMN_STATE = "state";
 
-        /*public static Uri buildTeamUri(String teamId) {
-               return ContentUris.withAppendedId(CONTENT_URI, teamId);
-        }*/
-        public static Uri buildTeamUri(String teamId) {
-            return CONTENT_URI.buildUpon().appendPath(teamId).build();
+        public static Uri buildTeamUri(long id) {
+               return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
     }
@@ -79,6 +77,10 @@ public class ScoreboardContract {
         public static final String COLUMN_HOME_PERIOD_THIRD = "home_period_third";
         public static final String COLUMN_HOME_PERIOD_FOURTH = "home_period_fourth";
 
+        public static Uri buildEventUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
         public static Uri buildEvetIdAndDateUri(String EventId, String eventDate) {
             return CONTENT_URI.buildUpon().appendPath(EventId)
                     .appendPath(eventDate).build();
@@ -87,18 +89,6 @@ public class ScoreboardContract {
         public static Uri buildEventDate(String eventDate) {
             return CONTENT_URI.buildUpon().appendPath(eventDate).build();
         }
-
-       /* public static Uri buildWeatherLocationWithStartDate(
-                String locationSetting, long startDate) {
-            long normalizedDate = normalizeDate(startDate);
-            return CONTENT_URI.buildUpon().appendPath(locationSetting)
-                    .appendQueryParameter(COLUMN_DATE, Long.toString(normalizedDate)).build();
-        }*/
-
-       /* public static Uri buildEventTeamWithStartDate(String EventId, String StartDate) {
-            return CONTENT_URI.buildUpon().appendPath(EventId)
-                    .appendPath(StartDate).build();
-        }*/
 
         public static String getTeamSettingFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
@@ -116,13 +106,7 @@ public class ScoreboardContract {
             return uri.getPathSegments().get(1);
         }
 
-        public static String getStartDateFromUri(Uri uri) {
-            String dateString = uri.getQueryParameter(COLUMN_START_DATE_TIME);
-            if (null != dateString && dateString.length() > 0)
-                return dateString;
-            else
-                return "n";// 0;
-        }
+
     }
 
     /* Inner class that defines the contents of the EventPlayer table */

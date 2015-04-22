@@ -75,6 +75,7 @@ public class TestDb extends AndroidTestCase {
 
         // Build a HashSet of all of the column names we want to look for
         final HashSet<String> teamColumnHashSet = new HashSet<String>();
+        teamColumnHashSet.add(ScoreboardContract.TeamEntry._ID);
         teamColumnHashSet.add(ScoreboardContract.TeamEntry.COLUMN_TEAM_ID);
         teamColumnHashSet.add(ScoreboardContract.TeamEntry.COLUMN_FIRST_NAME_TEAM);
         teamColumnHashSet.add(ScoreboardContract.TeamEntry.COLUMN_LAST_NAME_TEAM);
@@ -112,7 +113,7 @@ public class TestDb extends AndroidTestCase {
         ScoreboardDbHelper dbHelper = new ScoreboardDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        ContentValues scoreValues = TestUtilities.createEventValues();
+        ContentValues scoreValues = TestUtilities.createEventValues(teamAwayRowId, teamHomeRowId );
 
         long eventRowId = db.insert(ScoreboardContract.EventEntry.TABLE_NAME, null, scoreValues);
         assertTrue(eventRowId != -1);
@@ -190,16 +191,19 @@ public class TestDb extends AndroidTestCase {
 
         ContentValues testValues = TestUtilities.createHomeTeamValues();
 
-        long TeamRowId;
+        Long TeamRowId;
         TeamRowId = db.insert(ScoreboardContract.TeamEntry.TABLE_NAME, null, testValues);
 
         assertTrue(TeamRowId != -1);
 
-        String[] teamId =  {"washington-wizards"};
+
+        //COLUMN_TEAM_ID
+        //String[] teamId =  {"washington-wizards"};
+        String[] teamId =  {TeamRowId.toString()};
         Cursor cursor = db.query(
                 ScoreboardContract.TeamEntry.TABLE_NAME,  // Table to Query
                 null, // all columns
-                ScoreboardContract.TeamEntry.COLUMN_TEAM_ID +" = ? ", // Columns for the "where" clause
+                ScoreboardContract.TeamEntry._ID +" = ? ", // Columns for the "where" clause
                 teamId, // Values for the "where" clause
                 null, // columns to group by
                 null, // columns to filter by row groups
