@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Vector;
 
 /**
  * Created by theade on 4/13/2015.
@@ -114,6 +115,22 @@ public class FetchScoreTask extends AsyncTask<String, Void, String[]> {
         return highLowStr;
     }
 
+    String[] convertContentValuesToUXFormat(Vector<ContentValues> cvv) {
+        // return strings to keep UI functional for now
+        String[] resultStrs = new String[cvv.size()];
+        for ( int i = 0; i < cvv.size(); i++ ) {
+            ContentValues eventValues = cvv.elementAt(i);
+           /* String highAndLow = formatHighLows(
+                    eventValues.getAsDouble(ScoreboardContract.EventEntry.COLUMN_MAX_TEMP),
+                    eventValues.getAsDouble(ScoreboardContract.EventEntry.COLUMN_MIN_TEMP));*/
+            resultStrs[i] = getReadableDateString(
+                    eventValues.getAsLong(ScoreboardContract.EventEntry.COLUMN_DATE)) +
+                    " - " + eventValues.getAsString(ScoreboardContract.EventEntry.COLUMN_SHORT_DESC) +
+                    " - " + highAndLow;
+        }
+        return resultStrs;
+    }
+
     /**
      * Take the String representing the complete forecast in JSON Format and
      * pull out the data we need to construct the Strings needed for the wireframes.
@@ -125,23 +142,57 @@ public class FetchScoreTask extends AsyncTask<String, Void, String[]> {
             throws JSONException {
 
         // These are the names of the JSON objects that need to be extracted.
-        final String OSB_EVENT = "event";
+
+        final String EVENT_DATE = "events_date";
+
         final String OSB_AWAY_TEAM = "away_team";
+
         final String OSB_HOME_TEAM = "home_team";
+
+         //final String TABLE_NAME = "team";
+         final String OSB_TEAM_ID = "team_id";
+         final String OSB_FIRST_NAME_TEAM = "first_name";
+         final String OSB_LAST_NAME_TEAM = "last_name";
+         final String OSB_ABBREVIATION = "abbreviation";
+         final String OSB_SITE_NAME = "site_name";
+         final String OSB_CITY = "city";
+         final String OSB_STATE = "state";
+
+        final String OSB_EVENT = "event";
         final String OSB_EVENT_STATUS = "event_status";
+
+
         final String OSB_FULL_NAME = "full_name";
         final String OSB_AWAY_POINT_SCORED = "away_points_scored";
         final String OSB_HOME_POINT_SCORED = "home_points_scored";
 
         JSONObject scoreJson = new JSONObject(scoreJsonStr);
         JSONArray scoreArray = scoreJson.getJSONArray(OSB_EVENT);
+        String eventDate =  scoreJson.getString(EVENT_DATE);
+
+        Vector<ContentValues> cVVector = new Vector<ContentValues>(scoreArray.length());
 
         String[] resultStrs = new String[scoreArray.length()];
         for (int i = 0; i < scoreArray.length(); i++) {
 
             String awayTeam;
             String homeTeam;
+
+            String teamId;
+            String firstName;
+            String lastName;
+            String abbreviation;
+            String city;
+            String state;
+            String siteName;
+
+            String eventId;
+            String eventStartDate;
             String eventStatus;
+
+            int[] awayPeriodsArray = new int[4];
+            int[] homePeriodsArray = new int[4];
+
             int awayPointScored;
             int homePointScored;
 
@@ -152,10 +203,54 @@ public class FetchScoreTask extends AsyncTask<String, Void, String[]> {
             homePointScored = dayScoreboard.getInt(OSB_HOME_POINT_SCORED);
 
             JSONObject awayTeamObject = dayScoreboard.getJSONObject(OSB_AWAY_TEAM);
-            awayTeam = awayTeamObject.getString(OSB_FULL_NAME);
 
+            teamId = awayTeamObject.getString(OSB_TEAM_ID);
+            firstName = awayTeamObject.getString(OSB_FIRST_NAME_TEAM);
+            lastName = awayTeamObject.getString(OSB_LAST_NAME_TEAM);
+            abbreviation = awayTeamObject.getString(OSB_ABBREVIATION);
+            city = awayTeamObject.getString(OSB_CITY);
+            state = awayTeamObject.getString(OSB_STATE);
+            siteName = awayTeamObject.getString(OSB_SITE_NAME);
+
+            long IdTeamAway = addTeam(teamId, firstName, lastName, abbreviation, city, state, siteName);
+
+            awayTeam = awayTeamObject.getString(OSB_FULL_NAME);
+                  ///-----------------------------------------------------
             JSONObject homeTeamObject = dayScoreboard.getJSONObject(OSB_HOME_TEAM);
+            teamId = homeTeamObject.getString(OSB_TEAM_ID);
+            firstName = homeTeamObject.getString(OSB_FIRST_NAME_TEAM);
+            lastName = homeTeamObject.getString(OSB_LAST_NAME_TEAM);
+            abbreviation = homeTeamObject.getString(OSB_ABBREVIATION);
+            city = homeTeamObject.getString(OSB_CITY);
+            state = homeTeamObject.getString(OSB_STATE);
+            siteName = homeTeamObject.getString(OSB_SITE_NAME);
+
+            long IdTeamHome = addTeam(teamId, firstName, lastName, abbreviation, city, state, siteName);
+            
             homeTeam = homeTeamObject.getString(OSB_FULL_NAME);
+
+            ContentValues eventValues = new ContentValues();
+
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_ID, locationId);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_DATE, eventDate);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_STATUS, eventStatus);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_START_DATE_TIME, pressure);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_TEAM_ID_KEY, IdTeamAway);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_TEAM_ID_KEY, IdTeamHome);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_FIRTS, high);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_SECOND, low);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_THIRD, description);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_FOURTH, weatherId);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_FIRTS, high);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_SECOND, low);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_THIRD, description);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_FOURTH, weatherId);
+
+
+            cVVector.add(eventValues);
+            
+
+           // Vector<ContentValues> cVVector = new Vector<ContentValues>(weatherArray.length());
 
             resultStrs[i] = awayTeam + " " + awayPointScored + " @ " + homeTeam + " " + homePointScored;
         }
