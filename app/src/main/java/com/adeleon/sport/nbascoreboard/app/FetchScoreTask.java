@@ -48,28 +48,30 @@ public class FetchScoreTask extends AsyncTask<String, Void, String[]> {
     }
 
     /**
-     * Helper method to handle insertion of a new team in the weather database.
      *
-     * @param teamSetting The team string used to request updates from the server.
-     * @param cityName A human-readable city name, e.g "Mountain View"
-     * @param lat the latitude of the city
-     * @param lon the longitude of the city
-     * @return the row ID of the added team.
+     * @param teamId
+     * @param firstName
+     * @param lastName
+     * @param abbreviation
+     * @param cityName
+     * @param state
+     * @param siteName
+     * @return Id
      */
-    long addteam(String teamSetting, String cityName, double lat, double lon) {
-        long teamId;
+    long addTeam(String teamId, String firstName, String lastName, String abbreviation,  String cityName, String state, String siteName) {
+        long Id;
 
         // First, check if the team with this city name exists in the db
         Cursor teamCursor = mContext.getContentResolver().query(
                 ScoreboardContract.TeamEntry.CONTENT_URI,
                 new String[]{ScoreboardContract.TeamEntry._ID},
                 ScoreboardContract.TeamEntry.COLUMN_TEAM_ID + " = ?",
-                new String[]{teamSetting},
+                new String[]{teamId},
                 null);
 
         if (teamCursor.moveToFirst()) {
             int teamIdIndex = teamCursor.getColumnIndex(ScoreboardContract.TeamEntry._ID);
-            teamId = teamCursor.getLong(teamIdIndex);
+            Id = teamCursor.getLong(teamIdIndex);
         } else {
             // Now that the content provider is set up, inserting rows of data is pretty simple.
             // First create a ContentValues object to hold the data you want to insert.
@@ -77,14 +79,13 @@ public class FetchScoreTask extends AsyncTask<String, Void, String[]> {
 
             // Then add the data, along with the corresponding name of the data type,
             // so the content provider knows what kind of value is being inserted.
-            teamValues.put(ScoreboardContract.TeamEntry.COLUMN_FIRST_NAME_TEAM, cityName);
-            teamValues.put(ScoreboardContract.TeamEntry.COLUMN_LAST_NAME_TEAM, teamSetting);
-            teamValues.put(ScoreboardContract.TeamEntry.COLUMN_ABBREVIATION, lat);
-            teamValues.put(ScoreboardContract.TeamEntry.COLUMN_CITY, lon);
-            teamValues.put(ScoreboardContract.TeamEntry.COLUMN_STATE, lon);
-            teamValues.put(ScoreboardContract.TeamEntry.COLUMN_SITE_NAME, lon);
-         
-
+            teamValues.put(ScoreboardContract.TeamEntry.COLUMN_TEAM_ID, teamId);
+            teamValues.put(ScoreboardContract.TeamEntry.COLUMN_FIRST_NAME_TEAM, firstName);
+            teamValues.put(ScoreboardContract.TeamEntry.COLUMN_LAST_NAME_TEAM, lastName);
+            teamValues.put(ScoreboardContract.TeamEntry.COLUMN_ABBREVIATION, abbreviation);
+            teamValues.put(ScoreboardContract.TeamEntry.COLUMN_CITY, cityName);
+            teamValues.put(ScoreboardContract.TeamEntry.COLUMN_STATE, state);
+            teamValues.put(ScoreboardContract.TeamEntry.COLUMN_SITE_NAME, siteName);
 
             // Finally, insert team data into the database.
             Uri insertedUri = mContext.getContentResolver().insert(
@@ -93,12 +94,12 @@ public class FetchScoreTask extends AsyncTask<String, Void, String[]> {
             );
 
             // The resulting URI contains the ID for the row.  Extract the teamId from the Uri.
-            teamId = ContentUris.parseId(insertedUri);
+            Id = ContentUris.parseId(insertedUri);
         }
 
         teamCursor.close();
         // Wait, that worked?  Yes!
-        return teamId;
+        return Id;
     }
 
     /**
