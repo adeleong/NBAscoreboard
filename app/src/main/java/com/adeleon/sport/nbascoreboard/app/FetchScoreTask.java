@@ -149,6 +149,10 @@ public class FetchScoreTask extends AsyncTask<String, Void, String[]> {
 
         final String OSB_HOME_TEAM = "home_team";
 
+        final String AWAY_PERIOD_SCORES = "away_period_scores";
+
+        final String HOME_PERIOD_SCORES = "home_period_scores";
+
          //final String TABLE_NAME = "team";
          final String OSB_TEAM_ID = "team_id";
          final String OSB_FIRST_NAME_TEAM = "first_name";
@@ -159,6 +163,8 @@ public class FetchScoreTask extends AsyncTask<String, Void, String[]> {
          final String OSB_STATE = "state";
 
         final String OSB_EVENT = "event";
+        final String OSB_EVENT_ID = "event_id";
+        final String OSB_EVENT_START_DATE = "start_date_time";
         final String OSB_EVENT_STATUS = "event_status";
 
 
@@ -167,7 +173,9 @@ public class FetchScoreTask extends AsyncTask<String, Void, String[]> {
         final String OSB_HOME_POINT_SCORED = "home_points_scored";
 
         JSONObject scoreJson = new JSONObject(scoreJsonStr);
+
         JSONArray scoreArray = scoreJson.getJSONArray(OSB_EVENT);
+
         String eventDate =  scoreJson.getString(EVENT_DATE);
 
         Vector<ContentValues> cVVector = new Vector<ContentValues>(scoreArray.length());
@@ -198,12 +206,24 @@ public class FetchScoreTask extends AsyncTask<String, Void, String[]> {
 
             JSONObject dayScoreboard = scoreArray.getJSONObject(i);
 
+            eventId = dayScoreboard.getString(OSB_EVENT_ID);
+            eventStartDate =  dayScoreboard.getString(OSB_EVENT_START_DATE);
             eventStatus = dayScoreboard.getString(OSB_EVENT_STATUS);
+
             awayPointScored = dayScoreboard.getInt(OSB_AWAY_POINT_SCORED);
             homePointScored = dayScoreboard.getInt(OSB_HOME_POINT_SCORED);
 
             JSONObject awayTeamObject = dayScoreboard.getJSONObject(OSB_AWAY_TEAM);
 
+            JSONArray awayScoresArray = dayScoreboard.getJSONArray(AWAY_PERIOD_SCORES);
+            for (int j = 0; j < awayScoresArray.length(); j++){
+
+            }
+
+            JSONArray homeScoresArray = dayScoreboard.getJSONArray(HOME_PERIOD_SCORES);
+            for (int k = 0; k < awayScoresArray.length(); k++){
+                homePeriodsArray[k] =  homeScoresArray.getInt(0);
+            }
             teamId = awayTeamObject.getString(OSB_TEAM_ID);
             firstName = awayTeamObject.getString(OSB_FIRST_NAME_TEAM);
             lastName = awayTeamObject.getString(OSB_LAST_NAME_TEAM);
@@ -211,11 +231,10 @@ public class FetchScoreTask extends AsyncTask<String, Void, String[]> {
             city = awayTeamObject.getString(OSB_CITY);
             state = awayTeamObject.getString(OSB_STATE);
             siteName = awayTeamObject.getString(OSB_SITE_NAME);
-
             long IdTeamAway = addTeam(teamId, firstName, lastName, abbreviation, city, state, siteName);
-
             awayTeam = awayTeamObject.getString(OSB_FULL_NAME);
-                  ///-----------------------------------------------------
+
+             ///-----------------------------------------------------
             JSONObject homeTeamObject = dayScoreboard.getJSONObject(OSB_HOME_TEAM);
             teamId = homeTeamObject.getString(OSB_TEAM_ID);
             firstName = homeTeamObject.getString(OSB_FIRST_NAME_TEAM);
@@ -224,27 +243,25 @@ public class FetchScoreTask extends AsyncTask<String, Void, String[]> {
             city = homeTeamObject.getString(OSB_CITY);
             state = homeTeamObject.getString(OSB_STATE);
             siteName = homeTeamObject.getString(OSB_SITE_NAME);
-
             long IdTeamHome = addTeam(teamId, firstName, lastName, abbreviation, city, state, siteName);
-            
             homeTeam = homeTeamObject.getString(OSB_FULL_NAME);
 
             ContentValues eventValues = new ContentValues();
 
-            eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_ID, locationId);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_ID, eventId);
             eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_DATE, eventDate);
             eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_STATUS, eventStatus);
-            eventValues.put(ScoreboardContract.EventEntry.COLUMN_START_DATE_TIME, pressure);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_START_DATE_TIME, eventStartDate);
             eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_TEAM_ID_KEY, IdTeamAway);
             eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_TEAM_ID_KEY, IdTeamHome);
-            eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_FIRTS, high);
-            eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_SECOND, low);
-            eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_THIRD, description);
-            eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_FOURTH, weatherId);
-            eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_FIRTS, high);
-            eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_SECOND, low);
-            eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_THIRD, description);
-            eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_FOURTH, weatherId);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_FIRTS,  awayPeriodsArray[0]);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_SECOND, awayPeriodsArray[1]);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_THIRD,  awayPeriodsArray[2]);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_FOURTH, awayPeriodsArray[3]);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_FIRTS,  homePeriodsArray[0]);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_SECOND, homePeriodsArray[1]);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_THIRD,  homePeriodsArray[2]);
+            eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_FOURTH, homePeriodsArray[3]);
 
 
             cVVector.add(eventValues);
