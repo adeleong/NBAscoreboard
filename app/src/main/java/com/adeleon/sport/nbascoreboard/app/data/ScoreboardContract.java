@@ -76,6 +76,8 @@ public class ScoreboardContract {
         public static final String COLUMN_HOME_PERIOD_SECOND = "home_period_second";
         public static final String COLUMN_HOME_PERIOD_THIRD = "home_period_third";
         public static final String COLUMN_HOME_PERIOD_FOURTH = "home_period_fourth";
+        public static final String COLUMN_AWAY_PERIOD_SCORES = "away_period_scores";
+        public static final String COLUMN_HOME_PERIOD_SCORES = "home_period_scores";
 
         public static Uri buildEventUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);

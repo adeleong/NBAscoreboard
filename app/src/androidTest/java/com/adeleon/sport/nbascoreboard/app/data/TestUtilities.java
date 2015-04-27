@@ -26,7 +26,7 @@ import java.util.Set;
  */
 public class TestUtilities extends AndroidTestCase {
 
-    static final String TEST_EVENT_ID =  "20150327-charlotte-hornets-at-washington-wizards";
+    static final long TEST_EVENT_ID = 1; //"20150327-charlotte-hornets-at-washington-wizards";
     static final String TEST_EVENT_DATE = "2015-03-27T00:00:00-04:00";
 
     static void validateCursor(String error, Cursor valueCursor, ContentValues expectedValues) {
@@ -65,6 +65,8 @@ public class TestUtilities extends AndroidTestCase {
         eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_SECOND , 26);
         eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_THIRD , 23);
         eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_FOURTH , 21);
+        eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_SCORES , 106);
+        eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_SCORES , 99);
 
         return eventValues;
     }

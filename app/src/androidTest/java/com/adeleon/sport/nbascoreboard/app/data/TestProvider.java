@@ -124,7 +124,7 @@ public class TestProvider extends AndroidTestCase {
                 EventEntry.CONTENT_TYPE, type);
 
         String EventDate = "2015-03-27T19:00:00-04:00"; // December 21st, 2014
-        String eventId = "20150327-charlotte-hornets-at-washington-wizards";
+        long eventId = 2;
         // content://com.example.android.sunshine.app/weather/94074/20140612
         type = mContext.getContentResolver().getType(
                 EventEntry.buildEvetIdAndDateUri(eventId,EventDate));

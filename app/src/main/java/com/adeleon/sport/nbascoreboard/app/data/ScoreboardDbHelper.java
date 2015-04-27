@@ -59,6 +59,8 @@ public class ScoreboardDbHelper extends SQLiteOpenHelper {
                 EventEntry.COLUMN_HOME_PERIOD_SECOND + " INTEGER, " +
                 EventEntry.COLUMN_HOME_PERIOD_THIRD + " INTEGER, " +
                 EventEntry.COLUMN_HOME_PERIOD_FOURTH + " INTEGER, " +
+                EventEntry.COLUMN_AWAY_PERIOD_SCORES  + " INTEGER, " +
+                EventEntry.COLUMN_HOME_PERIOD_SCORES + " INTEGER, " +
                 " FOREIGN KEY (" + EventEntry.COLUMN_AWAY_TEAM_ID_KEY + ") REFERENCES " +
                 TeamEntry.TABLE_NAME + " (" + TeamEntry._ID + "), " +
                 " FOREIGN KEY (" + EventEntry.COLUMN_HOME_TEAM_ID_KEY + ") REFERENCES " +
