@@ -18,6 +18,7 @@ public class ScoreUtil {
     public static String getCurrentDate(){
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd", java.util.Locale.getDefault());
         Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH,-1);
         return formatter.format( cal.getTime());
     }
 }

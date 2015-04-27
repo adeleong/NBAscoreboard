@@ -124,7 +124,7 @@ public class TestProvider extends AndroidTestCase {
                 EventEntry.CONTENT_TYPE, type);
 
         String EventDate = "2015-03-27T19:00:00-04:00"; // December 21st, 2014
-        long eventId = 2;
+        long eventId = 1;
         // content://com.example.android.sunshine.app/weather/94074/20140612
         type = mContext.getContentResolver().getType(
                 EventEntry.buildEvetIdAndDateUri(eventId,EventDate));
@@ -407,6 +407,8 @@ public class TestProvider extends AndroidTestCase {
             weatherValues.put(EventEntry.COLUMN_HOME_PERIOD_SECOND, 16+ i);
             weatherValues.put(EventEntry.COLUMN_HOME_PERIOD_THIRD, 13 + i);
             weatherValues.put(EventEntry.COLUMN_HOME_PERIOD_FOURTH, 40+ i);
+            weatherValues.put(EventEntry.COLUMN_AWAY_PERIOD_SCORES, 105+ i);
+            weatherValues.put(EventEntry.COLUMN_HOME_PERIOD_SCORES, 107+ i);
             returnContentValues[i] = weatherValues;
         }
         return returnContentValues;

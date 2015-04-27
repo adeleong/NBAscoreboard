@@ -50,6 +50,8 @@ public class ScoreAdapter extends CursorAdapter {
 
         viewHolder.nameFirstTeam.setText(cursor.getString(ScoreboardFragment.COL_AWAY_TEAM_NAME));
         viewHolder.nameSecondTeam.setText(cursor.getString(ScoreboardFragment.COL_HOME_TEAM_NAME));
+        viewHolder.pointsFirstTeam.setText(cursor.getString(ScoreboardFragment.COL_AWAY_PERIOD_SCORES));
+        viewHolder.pointsSecondTeam.setText(cursor.getString(ScoreboardFragment.COL_HOME_PERIOD_SCORES));
 
 //        String url = cursor.getString(MoviesFragment.COL_MOVIE_THUMBNAIL_URL);
 //        Uri uri = Uri.parse(url);
