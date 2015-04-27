@@ -7,18 +7,18 @@
     android:orientation="vertical"
     tools:context=".MainActivity$PlaceholderFragment">
 
-    <EditText
-        android:id="@+id/date_score_edittext"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:inputType="text"
-        android:layout_weight="1"
-        android:ems="10"
-        android:textAlignment="center" />
+    <!--<EditText-->
+        <!--android:id="@+id/date_score_edittext"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:inputType="text"-->
+        <!--android:layout_weight="1"-->
+        <!--android:ems="10"-->
+        <!--android:textAlignment="center" />-->
 
     <ListView
         android:id="@+id/listview_scoreboard"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="8"/>
 

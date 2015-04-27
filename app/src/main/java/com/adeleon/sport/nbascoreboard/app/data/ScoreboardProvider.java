@@ -26,8 +26,8 @@ public class ScoreboardProvider extends ContentProvider {
     static final int EVENT_WITH_EVENT_DATE = 102;
     static final int TEAM = 300;
 
-    static final String AWAY_TEAM = "away_team";
-    static final String HOME_TEAM = "home_team";
+    public static final String AWAY_TEAM = "away_team";
+    public static final String HOME_TEAM = "home_team";
     private static  HashMap<String, String> sEventTeamProjectionMap;
 
     private static final SQLiteQueryBuilder sEventByDateQueryBuilder;
@@ -67,13 +67,14 @@ public class ScoreboardProvider extends ContentProvider {
                         " ON " + ScoreboardContract.EventEntry.TABLE_NAME +
                         "." + ScoreboardContract.EventEntry.COLUMN_AWAY_TEAM_ID_KEY +
                         " = " +AWAY_TEAM +
-                        "." + ScoreboardContract.TeamEntry.COLUMN_TEAM_ID
+                        "." + ScoreboardContract.TeamEntry._ID
                         + " INNER JOIN " + ScoreboardContract.TeamEntry.TABLE_NAME
-                        +" "+HOME_TEAM  +" ON "+HOME_TEAM+"."+ScoreboardContract.TeamEntry.COLUMN_TEAM_ID+
+                        +" "+HOME_TEAM  +
+                        " ON "+HOME_TEAM+"."+ScoreboardContract.TeamEntry._ID+
                          " = "+ ScoreboardContract.EventEntry.TABLE_NAME +
                          "."+ScoreboardContract.EventEntry.COLUMN_HOME_TEAM_ID_KEY
                            );
-        sEventByDateQueryBuilder.setProjectionMap(sEventTeamProjectionMap);
+        //sEventByDateQueryBuilder.setProjectionMap(sEventTeamProjectionMap);
     }
 
     //Event.Event_date = ?
@@ -129,8 +130,9 @@ public class ScoreboardProvider extends ContentProvider {
 
         // For each type of URI you want to add, create a corresponding code.
         matcher.addURI(authority, ScoreboardContract.PATH_EVENT, EVENT);
-        matcher.addURI(authority, ScoreboardContract.PATH_EVENT + "/*/*", EVENT_WITH_EVENT_ID_AND_EVENT_DATE);
         matcher.addURI(authority, ScoreboardContract.PATH_EVENT + "/*", EVENT_WITH_EVENT_DATE);
+        matcher.addURI(authority, ScoreboardContract.PATH_EVENT + "/#/*", EVENT_WITH_EVENT_ID_AND_EVENT_DATE);
+
 
         matcher.addURI(authority, ScoreboardContract.PATH_TEAM, TEAM);
         return matcher;

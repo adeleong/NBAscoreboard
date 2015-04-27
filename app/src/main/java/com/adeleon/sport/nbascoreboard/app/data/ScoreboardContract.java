@@ -81,13 +81,13 @@ public class ScoreboardContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static Uri buildEvetIdAndDateUri(String EventId, String eventDate) {
-            return CONTENT_URI.buildUpon().appendPath(EventId)
+        public static Uri buildEvetIdAndDateUri(long EventId, String eventDate) {
+            return CONTENT_URI.buildUpon().appendPath(Long.toString( EventId))
                     .appendPath(eventDate).build();
         }
 
         public static Uri buildEventDate(String eventDate) {
-            return CONTENT_URI.buildUpon().appendPath(eventDate).build();
+            return CONTENT_URI.buildUpon().appendEncodedPath(eventDate).build();
         }
 
         public static String getTeamSettingFromUri(Uri uri) {

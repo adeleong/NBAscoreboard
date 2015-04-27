@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/content_first_team"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/name_first_team"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="First Team"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:lines="1"
+            android:linksClickable="false" />
+
+        <TextView
+            android:id="@+id/points_first_team"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="80"
+            android:textSize="24dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/content_versus"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="vs"
+            android:textSize="24dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Final"
+            android:textSize="24dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/content_second_team"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/name_second_team"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="First Team"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:lines="1" />
+
+        <TextView
+            android:id="@+id/points_second_team"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="80"
+            android:textSize="24dp" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

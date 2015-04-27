@@ -17,4 +17,9 @@
     <string name="pref_day_default" translatable="false">20150325</string>
     <string name="action_share">Share</string>
 
+
+    <!-- SyncAdapter related -->
+    <string name="sync_account_type">nbascoreboard.adeleon.com</string>
+    <string name="content_authority">com.adeleon.sport.nbascoreboard.app</string>
+
 </resources>
