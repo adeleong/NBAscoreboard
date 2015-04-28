@@ -69,6 +69,8 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
+
+        ScoreUtil.initcialize(getActivity());
     }
 
     @Override
