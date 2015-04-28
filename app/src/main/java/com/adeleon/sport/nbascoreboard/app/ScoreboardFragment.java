@@ -50,12 +50,16 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
             ScoreboardProvider.AWAY_TEAM + "." + ScoreboardContract.TeamEntry.COLUMN_LAST_NAME_TEAM,
             ScoreboardProvider.HOME_TEAM + "." + ScoreboardContract.TeamEntry.COLUMN_LAST_NAME_TEAM,
             ScoreboardContract.EventEntry.TABLE_NAME + "." + ScoreboardContract.EventEntry.COLUMN_EVENT_DATE,
+            ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_SCORES,
+            ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_SCORES
     };
 
     public static final int COL_EVENT_ID = 0;
     public static final int COL_AWAY_TEAM_NAME = 1;
     public static final int COL_HOME_TEAM_NAME = 2;
     public static final int COL_EVENT_DATE = 3;
+    public static final int COL_AWAY_PERIOD_SCORES = 4;
+    public static final int COL_HOME_PERIOD_SCORES = 5;
 
     public ScoreboardFragment() {
     }
@@ -65,6 +69,8 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
+
+        ScoreUtil.initcialize(getActivity());
     }
 
     @Override

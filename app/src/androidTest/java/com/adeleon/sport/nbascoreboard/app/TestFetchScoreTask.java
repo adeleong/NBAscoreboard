@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.test.AndroidTestCase;
 import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract;
+import com.adeleon.sport.nbascoreboard.app.services.ScoreSyncAdapter;
 
 /**
  * Created by theade on 4/13/2015.
@@ -31,7 +32,7 @@ public class TestFetchScoreTask extends AndroidTestCase {
                 ScoreboardContract.TeamEntry.COLUMN_TEAM_ID + " = ?",
                 new String[]{ADD_TEAM_ID});
 
-        FetchScoreTask fst = new FetchScoreTask(getContext(), null);
+        ScoreSyncAdapter fst = new ScoreSyncAdapter(getContext(), false);
         long IdTeam = fst.addTeam(ADD_TEAM_ID, ADD_TEAM_FIRST_NAME_TEAM,
                 ADD_TEAM_LAST_NAME_TEAM, ADD_TEAM_ABBREVIATION, ADD_TEAM_CITY, ADD_TEAM_STATE, ADD_TEAM_SITE_NAME);
 

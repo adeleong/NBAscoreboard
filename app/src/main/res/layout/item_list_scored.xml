@@ -12,9 +12,10 @@
 
         <ImageView
             android:id="@+id/away_ico_team"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/cavaliers" />
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/cavaliers"
+            android:layout_gravity="center" />
 
         <LinearLayout
             android:id="@+id/content_first_team"
@@ -32,22 +33,22 @@
                 android:textSize="20dp"
                 android:textStyle="bold"
                 android:textColor="@android:color/white"
-                android:shadowColor="@android:color/black"
-                android:shadowDx="1"
-                android:shadowDy="1"
                 android:lines="1"
-                android:linksClickable="false" />
+                android:linksClickable="false"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/points_first_team"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="80"
-                android:textSize="24dp"
-                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textSize="44dp"
                 android:shadowColor="@android:color/black"
                 android:shadowDx="1"
-                android:shadowDy="1" />
+                android:shadowDy="1"
+                android:shadowRadius="2"
+                android:textColor="#FFAA00" />
 
         </LinearLayout>
 
@@ -84,9 +85,10 @@
 
         <ImageView
             android:id="@+id/home_ico_team"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/cavaliers" />
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/cavaliers"
+            android:layout_gravity="center" />
 
         <LinearLayout
             android:id="@+id/content_second_team"
@@ -104,21 +106,21 @@
                 android:textSize="20dp"
                 android:textStyle="bold"
                 android:textColor="@android:color/white"
-                android:shadowColor="@android:color/black"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:lines="1" />
+                android:lines="1"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/points_second_team"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="80"
-                android:textColor="@android:color/white"
+                android:textStyle="bold"
                 android:shadowColor="@android:color/black"
                 android:shadowDx="1"
                 android:shadowDy="1"
-                android:textSize="24dp" />
+                android:shadowRadius="2"
+                android:textColor="#FFAA00"
+                android:textSize="44dp" />
 
         </LinearLayout>
 

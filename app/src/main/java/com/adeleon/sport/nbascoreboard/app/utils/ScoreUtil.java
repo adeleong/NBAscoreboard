@@ -14,8 +14,8 @@ import java.util.Calendar;
 public class ScoreUtil {
     private static Context mContext;
 
-    public void initcialize(Context mContext) {
-        this.mContext = mContext;
+    public static void initcialize(Context context) {
+        mContext = context;
     }
 
     private String getReadableDateString(long time) {
@@ -28,6 +28,7 @@ public class ScoreUtil {
     public static String getCurrentDate() {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd", java.util.Locale.getDefault());
         Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, -1);
         return formatter.format(cal.getTime());
     }
 
@@ -45,12 +46,12 @@ public class ScoreUtil {
     private enum ImageTeam {
         CAVALIERS("Cavaliers", mContext.getResources().getDrawable(R.drawable.cavaliers)),
         CELTICS("Celtics", mContext.getResources().getDrawable(R.drawable.celtics)),
-        CLIPERS("Clipers", mContext.getResources().getDrawable(R.drawable.clippers)),
+        CLIPPERS("Clippers", mContext.getResources().getDrawable(R.drawable.clippers)),
         SPURS("Spurs", mContext.getResources().getDrawable(R.drawable.spurs)),
         RAPTORS("Raptors", mContext.getResources().getDrawable(R.drawable.raptors)),
         WIZARDS("Wizards", mContext.getResources().getDrawable(R.drawable.wizards)),
         ROCKETS("Rockets", mContext.getResources().getDrawable(R.drawable.rockets)),
-        MARVERICKS("Marvericks", mContext.getResources().getDrawable(R.drawable.mavericks));
+        MAVERICKS("Mavericks", mContext.getResources().getDrawable(R.drawable.mavericks));
 
         private String name;
         private Drawable drawable;
