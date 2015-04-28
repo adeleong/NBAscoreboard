@@ -295,6 +295,8 @@ public class ScoreSyncAdapter extends AbstractThreadedSyncAdapter {
                 eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_SECOND, homePeriodsArray[1]);
                 eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_THIRD, homePeriodsArray[2]);
                 eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_FOURTH, homePeriodsArray[3]);
+                eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_SCORES, awayPointScored);
+                eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_SCORES, homePointScored);
 
 
                 cVVector.add(eventValues);
@@ -327,7 +329,7 @@ public class ScoreSyncAdapter extends AbstractThreadedSyncAdapter {
      * @param siteName
      * @return Id
      */
-    long addTeam(String teamId, String firstName, String lastName, String abbreviation,  String cityName, String state, String siteName) {
+    public long addTeam(String teamId, String firstName, String lastName, String abbreviation,  String cityName, String state, String siteName) {
         long Id;
 
         // First, check if the team with this city name exists in the db

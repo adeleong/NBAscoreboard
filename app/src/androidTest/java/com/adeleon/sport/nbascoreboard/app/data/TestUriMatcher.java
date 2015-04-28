@@ -10,13 +10,13 @@ import android.test.AndroidTestCase;
 
 
 public class TestUriMatcher extends AndroidTestCase {
-    private static final String EVENT_ID_QUERY = "20150327-charlotte-hornets-at-washington-wizards";
+    private static final long EVENT_ID_QUERY = 1; //"20150327-charlotte-hornets-at-washington-wizards";
     private static final String EVENT_DATE_QUERY = "2015-03-27T19:00:00-04:00";
 
     // content://com.example.android.sunshine.app/weather"
     private static final Uri TEST_EVENT_DIR = ScoreboardContract.EventEntry.CONTENT_URI;
-    private static final Uri TEST_EVENT_WITH_EVENT_ID_DIR = ScoreboardContract.EventEntry.buildEvetIdAndDateUri(EVENT_ID_QUERY,EVENT_DATE_QUERY);
     private static final Uri TEST_EVENT_WITH_EVENT_DATE_DIR = ScoreboardContract.EventEntry.buildEventDate(EVENT_DATE_QUERY);
+    private static final Uri TEST_EVENT_WITH_EVENT_ID_DIR = ScoreboardContract.EventEntry.buildEvetIdAndDateUri(EVENT_ID_QUERY,EVENT_DATE_QUERY);
     // content://com.example.android.sunshine.app/location"
     private static final Uri TEST_TEAM_DIR = ScoreboardContract.TeamEntry.CONTENT_URI;
 
