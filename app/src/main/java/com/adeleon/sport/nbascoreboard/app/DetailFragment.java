@@ -18,6 +18,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract;
+import com.adeleon.sport.nbascoreboard.app.data.ScoreboardProvider;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -44,6 +47,40 @@ public class DetailFragment extends Fragment {
     public DetailFragment() {
         setHasOptionsMenu(true);
     }
+
+    private static final String[] SCORE_DETAIL_COLUMNS = {
+            ScoreboardContract.EventEntry.TABLE_NAME + "." + ScoreboardContract.EventEntry._ID,
+            ScoreboardProvider.AWAY_TEAM + "." + ScoreboardContract.TeamEntry.COLUMN_LAST_NAME_TEAM,
+            ScoreboardProvider.HOME_TEAM + "." + ScoreboardContract.TeamEntry.COLUMN_LAST_NAME_TEAM,
+            ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_FIRTS,
+            ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_SECOND,
+            ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_THIRD,
+            ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_FOURTH,
+            ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_FIRTS,
+            ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_SECOND,
+            ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_THIRD,
+            ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_FOURTH,
+            ScoreboardContract.EventEntry.COLUMN_AWAY_PERIOD_SCORES,
+            ScoreboardContract.EventEntry.COLUMN_HOME_PERIOD_SCORES
+    };
+
+    public static final int COL_EVENT_ID = 0;
+    public static final int COL_AWAY_TEAM_ABBRE = 1;
+    public static final int COL_HOME_TEAM_ABBRE = 2;
+
+    public static final int COL_AWAY_PERIOD_FIRTS = 3;
+    public static final int COL_AWAY_PERIOD_SECOND = 4;
+    public static final int COL_AWAY_PERIOD_THIRD =  5;
+    public static final int COL_AWAY_PERIOD_FOURTH = 6;
+
+    public static final int COL_HOME_PERIOD_FIRTS = 7;
+    public static final int COL_HOME_PERIOD_SECOND = 8;
+    public static final int COL_HOME_PERIOD_THIRD = 9;
+    public static final int COL_HOME_PERIOD_FOURTH = 10;
+
+    public static final int COL_AWAY_PERIOD_SCORES = 11;
+    public static final int COL_HOME_PERIOD_SCORES = 12;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
