@@ -9,6 +9,13 @@
         <dex dex="C:\Users\theade\Documents\NBAscoreboard\app\build\intermediates\pre-dexed\debug\support-annotations-21.0.3-3d30993e80ec1c6ec254c942d5a86e05a0c0d310.jar" />
     </item>
     <item
+        jar="C:\Users\theade\Documents\NBAscoreboard\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\21.0.3\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="81d42bf983a8741f4888a6e333e454e4a5e0eeb7">
+        <dex dex="C:\Users\theade\Documents\NBAscoreboard\app\build\intermediates\pre-dexed\debug\classes-8ed0f8da072f91558a932cb48483f674fa9ec71d.jar" />
+    </item>
+    <item
         jar="C:\Users\theade\Documents\NBAscoreboard\app\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.3\classes.jar"
         jumboMode="false"
         revision="21.1.2"
@@ -21,13 +28,6 @@
         revision="21.1.2"
         sha1="01ec05bfbafcc07646ba813000bf2ef11742dd03">
         <dex dex="C:\Users\theade\Documents\NBAscoreboard\app\build\intermediates\pre-dexed\debug\internal_impl-21.0.3-410de450e881a8e6c415b823a1d49fcf08938c14.jar" />
-    </item>
-    <item
-        jar="C:\Users\theade\Documents\NBAscoreboard\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\21.0.3\classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="81d42bf983a8741f4888a6e333e454e4a5e0eeb7">
-        <dex dex="C:\Users\theade\Documents\NBAscoreboard\app\build\intermediates\pre-dexed\debug\classes-8ed0f8da072f91558a932cb48483f674fa9ec71d.jar" />
     </item>
 
 </items>
