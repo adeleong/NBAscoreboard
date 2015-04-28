@@ -28,38 +28,11 @@ public class ScoreboardProvider extends ContentProvider {
 
     public static final String AWAY_TEAM = "away_team";
     public static final String HOME_TEAM = "home_team";
-    private static  HashMap<String, String> sEventTeamProjectionMap;
 
     private static final SQLiteQueryBuilder sEventByDateQueryBuilder;
 
     static{
         sEventByDateQueryBuilder = new SQLiteQueryBuilder();
-
-        sEventTeamProjectionMap = new HashMap<String, String>();
-        sEventTeamProjectionMap.put(EventEntry.COLUMN_EVENT_ID, EventEntry.COLUMN_EVENT_ID);
-        sEventTeamProjectionMap.put(EventEntry.COLUMN_EVENT_DATE, EventEntry.COLUMN_EVENT_DATE);
-        sEventTeamProjectionMap.put(EventEntry.COLUMN_START_DATE_TIME, EventEntry.COLUMN_START_DATE_TIME);
-        sEventTeamProjectionMap.put(EventEntry.COLUMN_EVENT_STATUS, EventEntry.COLUMN_EVENT_STATUS);
-        sEventTeamProjectionMap.put(EventEntry.COLUMN_AWAY_TEAM_ID_KEY, EventEntry.COLUMN_AWAY_TEAM_ID_KEY);
-        sEventTeamProjectionMap.put(EventEntry.COLUMN_HOME_TEAM_ID_KEY, EventEntry.COLUMN_HOME_TEAM_ID_KEY);
-        sEventTeamProjectionMap.put(EventEntry.COLUMN_AWAY_PERIOD_FIRTS, EventEntry.COLUMN_AWAY_PERIOD_FIRTS);
-        sEventTeamProjectionMap.put(EventEntry.COLUMN_AWAY_PERIOD_SECOND, EventEntry.COLUMN_AWAY_PERIOD_SECOND);
-        sEventTeamProjectionMap.put(EventEntry.COLUMN_AWAY_PERIOD_THIRD, EventEntry.COLUMN_AWAY_PERIOD_THIRD);
-        sEventTeamProjectionMap.put(EventEntry.COLUMN_AWAY_PERIOD_FOURTH, EventEntry.COLUMN_AWAY_PERIOD_FOURTH);
-        sEventTeamProjectionMap.put(EventEntry.COLUMN_HOME_PERIOD_FIRTS, EventEntry.COLUMN_HOME_PERIOD_FIRTS);
-        sEventTeamProjectionMap.put(EventEntry.COLUMN_HOME_PERIOD_SECOND, EventEntry.COLUMN_HOME_PERIOD_SECOND);
-        sEventTeamProjectionMap.put(EventEntry.COLUMN_HOME_PERIOD_THIRD, EventEntry.COLUMN_HOME_PERIOD_THIRD);
-        sEventTeamProjectionMap.put(EventEntry.COLUMN_HOME_PERIOD_FOURTH, EventEntry.COLUMN_HOME_PERIOD_FOURTH);
-
-        sEventTeamProjectionMap.put(AWAY_TEAM+"."+TeamEntry.COLUMN_FIRST_NAME_TEAM , AWAY_TEAM+"."+TeamEntry.COLUMN_FIRST_NAME_TEAM );
-        sEventTeamProjectionMap.put(AWAY_TEAM+"."+TeamEntry.COLUMN_LAST_NAME_TEAM , AWAY_TEAM+"."+TeamEntry.COLUMN_LAST_NAME_TEAM );
-        sEventTeamProjectionMap.put(AWAY_TEAM+"."+TeamEntry.COLUMN_ABBREVIATION , AWAY_TEAM+"."+TeamEntry.COLUMN_ABBREVIATION );
-
-        sEventTeamProjectionMap.put(HOME_TEAM+"."+TeamEntry.COLUMN_FIRST_NAME_TEAM , HOME_TEAM+"."+TeamEntry.COLUMN_FIRST_NAME_TEAM );
-        sEventTeamProjectionMap.put(HOME_TEAM+"."+TeamEntry.COLUMN_LAST_NAME_TEAM , HOME_TEAM+"."+TeamEntry.COLUMN_LAST_NAME_TEAM );
-        sEventTeamProjectionMap.put(HOME_TEAM+"."+TeamEntry.COLUMN_ABBREVIATION , HOME_TEAM+"."+TeamEntry.COLUMN_ABBREVIATION );
-
-        //This is an inner join which looks like
 
         sEventByDateQueryBuilder.setTables(
                 ScoreboardContract.EventEntry.TABLE_NAME + " INNER JOIN " +
@@ -74,7 +47,6 @@ public class ScoreboardProvider extends ContentProvider {
                          " = "+ ScoreboardContract.EventEntry.TABLE_NAME +
                          "."+ScoreboardContract.EventEntry.COLUMN_HOME_TEAM_ID_KEY
                            );
-        //sEventByDateQueryBuilder.setProjectionMap(sEventTeamProjectionMap);
     }
 
     //Event.Event_date = ?
@@ -83,9 +55,10 @@ public class ScoreboardProvider extends ContentProvider {
                     "." + EventEntry.COLUMN_EVENT_DATE + " = ? ";
 
     private static final String sEventRowByEventIdAndDateSelection =
-            EventEntry.TABLE_NAME+
-                    "." + EventEntry.COLUMN_EVENT_ID + " = ? AND "+
-                     EventEntry.COLUMN_EVENT_DATE +" = ? ";
+            ScoreboardContract.EventEntry.TABLE_NAME +
+                    "." + EventEntry._ID + " = ? AND "+
+            ScoreboardContract.EventEntry.TABLE_NAME +
+                    "." + EventEntry.COLUMN_EVENT_DATE +" = ? ";
 
     private Cursor getEventByEventDate(Uri uri, String[] projection, String sortOrder) {
         //String TeamSetting = ScoreboardContract.EventEntry.getTeamSettingFromUri(uri);
@@ -130,8 +103,8 @@ public class ScoreboardProvider extends ContentProvider {
 
         // For each type of URI you want to add, create a corresponding code.
         matcher.addURI(authority, ScoreboardContract.PATH_EVENT, EVENT);
-        matcher.addURI(authority, ScoreboardContract.PATH_EVENT + "/*", EVENT_WITH_EVENT_DATE);
-        matcher.addURI(authority, ScoreboardContract.PATH_EVENT + "/#/*", EVENT_WITH_EVENT_ID_AND_EVENT_DATE);
+        matcher.addURI(authority, ScoreboardContract.PATH_EVENT + "/#", EVENT_WITH_EVENT_DATE);
+        matcher.addURI(authority, ScoreboardContract.PATH_EVENT + "/#/#", EVENT_WITH_EVENT_ID_AND_EVENT_DATE);
 
 
         matcher.addURI(authority, ScoreboardContract.PATH_TEAM, TEAM);

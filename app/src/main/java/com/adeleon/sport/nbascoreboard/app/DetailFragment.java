@@ -5,8 +5,13 @@ package com.adeleon.sport.nbascoreboard.app;
  */
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
@@ -20,14 +25,16 @@ import android.widget.TextView;
 
 import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract;
 import com.adeleon.sport.nbascoreboard.app.data.ScoreboardProvider;
+import com.adeleon.sport.nbascoreboard.app.utils.ScoreUtil;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class DetailFragment extends Fragment {
+public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
+    private static final int SCORED_DETAIL_LOADER = 0;
     private static final String SCORE_SHARE_HASHTAG = " #NBAscoreboardApp";
     private String mScoreboardStr;
 
@@ -65,8 +72,8 @@ public class DetailFragment extends Fragment {
     };
 
     public static final int COL_EVENT_ID = 0;
-    public static final int COL_AWAY_TEAM_ABBRE = 1;
-    public static final int COL_HOME_TEAM_ABBRE = 2;
+    public static final int COL_AWAY_TEAM_NAME = 1;
+    public static final int COL_HOME_TEAM_NAME = 2;
 
     public static final int COL_AWAY_PERIOD_FIRTS = 3;
     public static final int COL_AWAY_PERIOD_SECOND = 4;
@@ -103,6 +110,12 @@ public class DetailFragment extends Fragment {
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(SCORED_DETAIL_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.detailfragment, menu);
@@ -128,7 +141,41 @@ public class DetailFragment extends Fragment {
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT,
-                mScoreboardStr + SCORE_SHARE_HASHTAG);
+                awayNameTeam.getText() +" "+awayTotalPoints.getText() +" vs "+homeNameTeam.getText() +" "+homeTotalPoints.getText()  +" "+ SCORE_SHARE_HASHTAG);
         return shareIntent;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Intent intent = getActivity().getIntent();
+        if (intent == null) {
+            return null;
+        }
+
+        return new CursorLoader(getActivity(), intent.getData(), SCORE_DETAIL_COLUMNS, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (data != null && data.moveToFirst()) {
+            awayNameTeam.setText(data.getString(COL_AWAY_TEAM_NAME));
+            homeNameTeam.setText(data.getString(COL_HOME_TEAM_NAME));
+            awayFirstPeriod.setText(data.getString(COL_AWAY_PERIOD_FIRTS));
+            homeFirstPeriod.setText(data.getString(COL_HOME_PERIOD_FIRTS));
+            awaySecondPeriod.setText(data.getString(COL_AWAY_PERIOD_SECOND));
+            homeSecondPeriod.setText(data.getString(COL_HOME_PERIOD_SECOND));
+            awayThirdPeriod.setText(data.getString(COL_AWAY_PERIOD_THIRD));
+            homeThirdPeriod.setText(data.getString(COL_HOME_PERIOD_THIRD));
+            awayFourthPeriod.setText(data.getString(COL_AWAY_PERIOD_FOURTH));
+            homeFourthPeriod.setText(data.getString(COL_HOME_PERIOD_FOURTH));
+            awayTotalPoints.setText(data.getString(COL_AWAY_PERIOD_SCORES));
+            homeTotalPoints.setText(data.getString(COL_HOME_PERIOD_SCORES));
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+
     }
 }

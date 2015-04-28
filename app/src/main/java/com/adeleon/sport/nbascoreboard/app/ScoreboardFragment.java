@@ -10,6 +10,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -68,7 +69,6 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
-        setHasOptionsMenu(true);
 
         ScoreUtil.initcialize(getActivity());
     }
@@ -149,8 +149,9 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
 
                 if (cursor != null) {
-                    Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .setData(ScoreboardContract.EventEntry.buildEvetIdAndDateUri(cursor.getLong(COL_EVENT_ID), cursor.getString(COL_EVENT_DATE)));
+                    Uri uri = ScoreboardContract.EventEntry.buildEvetIdAndDateUri(cursor.getLong(COL_EVENT_ID),cursor.getString(COL_EVENT_DATE));
+
+                    Intent intent = new Intent(getActivity(), DetailActivity.class).setData(uri);
                     startActivity(intent);
                 }
             }

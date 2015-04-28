@@ -51,7 +51,15 @@ public class ScoreUtil {
         RAPTORS("Raptors", mContext.getResources().getDrawable(R.drawable.raptors)),
         WIZARDS("Wizards", mContext.getResources().getDrawable(R.drawable.wizards)),
         ROCKETS("Rockets", mContext.getResources().getDrawable(R.drawable.rockets)),
-        MAVERICKS("Mavericks", mContext.getResources().getDrawable(R.drawable.mavericks));
+        MAVERICKS("Mavericks", mContext.getResources().getDrawable(R.drawable.mavericks)),
+        TAIL_BLAZERS("Trail Blazers",mContext.getResources().getDrawable(R.drawable.blazers)),
+        BULLS("Bulls",mContext.getResources().getDrawable(R.drawable.bulls)),
+        GRIZZLIES("Grizzlies",mContext.getResources().getDrawable(R.drawable.grizzlies)),
+        HAWKS("Hawks",mContext.getResources().getDrawable(R.drawable.hawks)),
+        NETS("Nets",mContext.getResources().getDrawable(R.drawable.nets)),
+        WARRIORS("Warriors",mContext.getResources().getDrawable(R.drawable.warriors)),
+        PELICANS("Pelicans",mContext.getResources().getDrawable(R.drawable.pelicans)),
+        BUCKS("Bucks",mContext.getResources().getDrawable(R.drawable.bucks));
 
         private String name;
         private Drawable drawable;

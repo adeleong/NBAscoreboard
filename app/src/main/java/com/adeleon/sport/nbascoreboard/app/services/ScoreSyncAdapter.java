@@ -249,12 +249,20 @@ public class ScoreSyncAdapter extends AbstractThreadedSyncAdapter {
                 if (eventStatus.equals(STATUS_COMPLETED)) {
                     JSONArray awayScoresArray = dayScoreboard.getJSONArray(AWAY_PERIOD_SCORES);
                     for (int j = 0; j < awayScoresArray.length(); j++) {
-                        awayPeriodsArray[j] = awayScoresArray.getInt(j);
+                        if (j <= 3 ) {
+                            awayPeriodsArray[j] = awayScoresArray.getInt(j);
+                        }else{
+                            awayPeriodsArray[3] = awayPeriodsArray[3] + awayScoresArray.getInt(j);
+                        }
                     }
 
                     JSONArray homeScoresArray = dayScoreboard.getJSONArray(HOME_PERIOD_SCORES);
                     for (int k = 0; k < awayScoresArray.length(); k++) {
-                        homePeriodsArray[k] = homeScoresArray.getInt(k);
+                        if (k <= 3 ) {
+                            homePeriodsArray[k] = homeScoresArray.getInt(k);
+                        }else{
+                            homePeriodsArray[3] = homePeriodsArray[3] + homeScoresArray.getInt(k);
+                        }
                     }
                 }
                 teamId = awayTeamObject.getString(OSB_TEAM_ID);

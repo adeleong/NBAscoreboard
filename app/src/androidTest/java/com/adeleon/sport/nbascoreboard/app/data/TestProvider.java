@@ -221,7 +221,7 @@ public class TestProvider extends AndroidTestCase {
         Uri teamUri = mContext.getContentResolver().
                 insert(TeamEntry.CONTENT_URI, awayValues);
         long teamRowId = ContentUris.parseId(teamUri);
-       // String TeamRowId = "charlotte-hornets";
+       // String TeamRowId = "charlotte-pelicans";
 
         // Verify we got a row back.
         assertTrue(teamRowId != -1);
