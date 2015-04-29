@@ -5,55 +5,61 @@
     android:orientation="horizontal"
     android:gravity="center">
 
-    <FrameLayout
-        android:layout_width="0dp"
+    <!--<FrameLayout-->
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1">
+
+    <ImageView
+        android:id="@+id/away_ico_team"
+        android:layout_width="90dp"
+        android:layout_height="80dp"
+        android:src="@drawable/cavaliers"
+        android:layout_gravity="center" />
+
+    <LinearLayout
+        android:id="@+id/content_first_team"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_gravity="center">
 
-        <ImageView
-            android:id="@+id/away_ico_team"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/cavaliers"
-            android:layout_gravity="center" />
-
-        <LinearLayout
-            android:id="@+id/content_first_team"
+        <TextView
+            android:id="@+id/name_first_team"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:layout_gravity="center">
+            android:text="First Team"
+            android:textSize="24dp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:lines="1"
+            android:linksClickable="false"
+            android:visibility="gone"/>
 
-            <TextView
-                android:id="@+id/name_first_team"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="First Team"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                android:textColor="@android:color/white"
-                android:lines="1"
-                android:linksClickable="false"
-                android:visibility="gone"/>
+    </LinearLayout>
+    <!--</FrameLayout>-->
 
-            <TextView
-                android:id="@+id/points_first_team"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="80"
-                android:textStyle="bold"
-                android:textSize="44dp"
-                android:shadowColor="@android:color/black"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
-                android:textColor="#FFAA00" />
-
-        </LinearLayout>
-
-
-    </FrameLayout>
+    <LinearLayout
+        android:id="@+id/content_point_er"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="right"
+        android:layout_weight="1">
+        <TextView
+            android:id="@+id/points_first_team"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="80"
+            android:textStyle="bold"
+            android:textSize="24dp"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:textColor="#FFAA00" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/content_versus"
@@ -63,68 +69,77 @@
         android:gravity="center_horizontal"
         android:layout_weight="1">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="vs"
-            android:textSize="24dp" />
+        <!-- <TextView
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="vs"
+             android:textSize="15dp" />-->
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Final"
-            android:textSize="24dp" />
+            android:text="FINAL"
+            android:textSize="10dp"
+            android:textStyle="bold"
+            android:textColor="#000000"/>
 
     </LinearLayout>
 
-
-    <FrameLayout
+    <LinearLayout
+        android:id="@+id/content_point"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="left"
         android:layout_weight="1">
-
-        <ImageView
-            android:id="@+id/home_ico_team"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/cavaliers"
-            android:layout_gravity="center" />
-
-        <LinearLayout
-            android:id="@+id/content_second_team"
+        <TextView
+            android:id="@+id/points_second_team"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:layout_gravity="center">
+            android:text="80"
+            android:textStyle="bold"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:textColor="#FFAA00"
+            android:textSize="24dp" />
+    </LinearLayout>
 
-            <TextView
-                android:id="@+id/name_second_team"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="First Team"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                android:textColor="@android:color/white"
-                android:lines="1"
-                android:visibility="gone"/>
+    <!-- <FrameLayout -->
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/points_second_team"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="80"
-                android:textStyle="bold"
-                android:shadowColor="@android:color/black"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
-                android:textColor="#FFAA00"
-                android:textSize="44dp" />
+    <LinearLayout
+        android:id="@+id/content_second_team"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_gravity="center">
 
-        </LinearLayout>
+        <TextView
+            android:id="@+id/name_second_team"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="First Team"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:lines="1"
+            android:visibility="gone"/>
 
-    </FrameLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/home_ico_team"
+        android:layout_width="90dp"
+        android:layout_height="80dp"
+        android:src="@drawable/cavaliers"
+        android:layout_gravity="center" />
+
+    <!--</FrameLayout>-->
 
 
 </LinearLayout>
