@@ -389,7 +389,7 @@ public class ScoreSyncAdapter extends AbstractThreadedSyncAdapter {
         // Will contain the raw JSON response as a string.
         String scoreboardJsonStr = null;
         String sport_type = "nba";
-        String authotization_value = "Bearer 56ff0c86-4f5e-48da-a62e-1a12af7abcd2";
+        String authotization_value = getContext().getString(R.string.token_api);
 
         try {
 

@@ -21,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract;
 import com.adeleon.sport.nbascoreboard.app.data.ScoreboardProvider;
@@ -41,6 +42,10 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
     private EditText dateScoreEditText;
     private DatePickerFragment dateScoreDatePickDialog;
     private SimpleDateFormat formatter;
+
+
+    private TextView noDataTextView;
+    private ListView listView;
 
     private static final int SCORED_LOADER = 0;
 
@@ -139,8 +144,10 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
 
         mScoreboardAdapter = new ScoreAdapter(getActivity(), null, 0);
 
+        noDataTextView = (TextView) rootView.findViewById(R.id.textview_no_data);
+
         // Get a reference to the ListView, and attach this adapter to it.
-        ListView listView = (ListView) rootView.findViewById(R.id.listview_scoreboard);
+        listView = (ListView) rootView.findViewById(R.id.listview_scoreboard);
         listView.setAdapter(mScoreboardAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -149,7 +156,7 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
 
                 if (cursor != null) {
-                    Uri uri = ScoreboardContract.EventEntry.buildEvetIdAndDateUri(cursor.getLong(COL_EVENT_ID),cursor.getString(COL_EVENT_DATE));
+                    Uri uri = ScoreboardContract.EventEntry.buildEvetIdAndDateUri(cursor.getLong(COL_EVENT_ID), cursor.getString(COL_EVENT_DATE));
 
                     Intent intent = new Intent(getActivity(), DetailActivity.class).setData(uri);
                     startActivity(intent);
@@ -217,7 +224,12 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor data) {
-        mScoreboardAdapter.swapCursor(data);
+        if (data.getCount() <= 0) {
+            noDataTextView.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        } else {
+            mScoreboardAdapter.swapCursor(data);
+        }
     }
 
     @Override
