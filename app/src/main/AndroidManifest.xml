@@ -44,29 +44,34 @@
             android:authorities="com.adeleon.sport.nbascoreboard.app"
             android:name=".data.ScoreboardProvider" />
 
-        <!-- SyncAdapter's dummy authentication service -->
-        <service android:name=".services.ScoreAuthenticatorService">
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
-        </service>
-
-        <!-- The SyncAdapter service -->
+        <!-- Declaring Service in Manifest -->
         <service
-            android:name=".services.ScoreSyncService"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.content.SyncAdapter" />
-            </intent-filter>
+            android:name=".services.ScoreIntentService"
+            android:exported="false" />
 
-            <meta-data
-                android:name="android.content.SyncAdapter"
-                android:resource="@xml/syncadapter" />
-        </service>
+        <!--&lt;!&ndash; SyncAdapter's dummy authentication service &ndash;&gt;-->
+        <!--<service android:name=".services.ScoreAuthenticatorService">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.accounts.AccountAuthenticator" />-->
+            <!--</intent-filter>-->
+
+            <!--<meta-data-->
+                <!--android:name="android.accounts.AccountAuthenticator"-->
+                <!--android:resource="@xml/authenticator" />-->
+        <!--</service>-->
+
+        <!--&lt;!&ndash; The SyncAdapter service &ndash;&gt;-->
+        <!--<service-->
+            <!--android:name=".services.ScoreSyncService"-->
+            <!--android:exported="true">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.content.SyncAdapter" />-->
+            <!--</intent-filter>-->
+
+            <!--<meta-data-->
+                <!--android:name="android.content.SyncAdapter"-->
+                <!--android:resource="@xml/syncadapter" />-->
+        <!--</service>-->
     </application>
 
 </manifest>

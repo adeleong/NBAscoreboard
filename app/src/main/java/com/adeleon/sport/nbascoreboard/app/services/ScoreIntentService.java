@@ -1,19 +1,14 @@
 package com.adeleon.sport.nbascoreboard.app.services;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.content.AbstractThreadedSyncAdapter;
-import android.content.ContentProviderClient;
-import android.content.ContentResolver;
+import android.app.IntentService;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
-import android.content.SyncRequest;
-import android.content.SyncResult;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.ResultReceiver;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.adeleon.sport.nbascoreboard.app.R;
@@ -30,131 +25,68 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Vector;
+import java.util.zip.GZIPInputStream;
 
 /**
- * Created by theade on 4/26/2015.
+ * Created by Adeleon on 6/12/2015.
  */
-public class ScoreSyncAdapter extends AbstractThreadedSyncAdapter {
-    private final String LOG_TAG = ScoreSyncAdapter.class.getSimpleName();
+public class ScoreIntentService extends IntentService {
+    public static final String SCOREBOARD_BASE_URL = "https://erikberg.com/events.json?";
+    public static final String DAY_PARAM = "date";
+    public static final String CATEGORY_PARAM = "sport";
+    public static final String AUTHORIZATION_PARAM = "Authorization";
+    public static final String USER_AGENT = "User-agent";
+    public static final String ACCEPT_ENCODING = "Accept-encoding";
+    public static final String USER_AGENT_NAME = "MyRobot/1.0 (aderso.deleon@gmail.com)";
+    public static final String GZIP = "gzip";
 
+    public static final int STATUS_RUNNING = 0;
+    public static final int STATUS_FINISHED = 1;
+    public static final int STATUS_ERROR = 2;
+    public static final String PARAM_INTENT_SERVICE = "dateScore";
 
-    // Interval at which to sync, in seconds.
-    public static final int SECONDS_IN_HOUR = 3600;
+    //private static final String TAG = "ScoreIntentService";
 
-    public ScoreSyncAdapter(Context context, boolean autoInitialize) {
-        super(context, autoInitialize);
+    private final String LOG_TAG = ScoreIntentService.class.getSimpleName();
+
+    public ScoreIntentService() {
+        super(ScoreIntentService.class.getName());
     }
 
     @Override
-    public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
-        callSportService();
-    }
+    protected void onHandleIntent(Intent intent) {
 
-    /**
-     * Helper method to schedule the sync adapter periodic execution
-     */
-    public static void configurePeriodicSync(Context context, int syncInterval, int flexTime) {
-        Account account = getSyncAccount(context);
-        String authority = context.getString(R.string.content_authority);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            // we can enable inexact timers in our periodic sync
-            SyncRequest request = new SyncRequest.Builder().
-                    syncPeriodic(syncInterval, flexTime).
-                    setSyncAdapter(account, authority).
-                    setExtras(new Bundle()).build();
-            ContentResolver.requestSync(request);
-        } else {
-            ContentResolver.addPeriodicSync(account,
-                    authority, new Bundle(), syncInterval);
-        }
-    }
+        Log.d(LOG_TAG, "Service Started!");
 
-    /**
-     * Helper method to have the sync adapter sync immediately
-     *
-     * @param context The context used to access the account service
-     */
-    public static void syncImmediately(Context context) {
+        final ResultReceiver receiver = intent.getParcelableExtra("receiver");
+        String url = intent.getStringExtra(PARAM_INTENT_SERVICE);
+
         Bundle bundle = new Bundle();
-        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        ContentResolver.requestSync(getSyncAccount(context),
-                context.getString(R.string.content_authority), bundle);
-    }
 
-    /**
-     * Helper method to get the fake account to be used with SyncAdapter, or make a new one
-     * if the fake account doesn't exist yet.  If we make a new account, we call the
-     * onAccountCreated method so we can initialize things.
-     *
-     * @param context The context used to access the account service
-     * @return a fake account.
-     */
-    public static Account getSyncAccount(Context context) {
-        // Get an instance of the Android account manager
-        AccountManager accountManager =
-                (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
+        if (!TextUtils.isEmpty(url)) {
+            /* Update UI: Download Service is Running */
+            receiver.send(STATUS_RUNNING, Bundle.EMPTY);
 
-        // Create the account type and default account
-        Account newAccount = new Account(
-                context.getString(R.string.app_name), context.getString(R.string.sync_account_type));
+            try {
+                callSportService(intent.getExtras().getString(PARAM_INTENT_SERVICE));
+                /* Sending result back to activity */
+            } catch (Exception e) {
 
-        // If the password doesn't exist, the account doesn't exist
-        if (null == accountManager.getPassword(newAccount)) {
-
-        /*
-         * Add the account and account type, no password or user data
-         * If successful, return the Account object, otherwise report an error.
-         */
-            if (!accountManager.addAccountExplicitly(newAccount, "", null)) {
-                return null;
+                /* Sending error message back to activity */
+                bundle.putString(Intent.EXTRA_TEXT, e.toString());
+                receiver.send(STATUS_ERROR, bundle);
             }
-            /*
-             * If you don't set android:syncable="true" in
-             * in your <provider> element in the manifest,
-             * then call ContentResolver.setIsSyncable(account, AUTHORITY, 1)
-             * here.
-             */
-
-            onAccountCreated(newAccount, context);
         }
-        return newAccount;
+        Log.d(LOG_TAG, "Service Stopping!");
+        this.stopSelf();
     }
 
-    private static void onAccountCreated(Account newAccount, Context context) {
-        /*
-         * Since we've created an account
-         */
-        ScoreSyncAdapter.configurePeriodicSync(context);
-        /*
-         * Without calling setSyncAutomatically, our periodic sync will not be enabled.
-         */
-        ContentResolver.setSyncAutomatically(newAccount, context.getString(R.string.content_authority), true);
 
-        /*
-         * Finally, let's do a sync to get things started
-         */
-        syncImmediately(context);
-    }
-
-    public static void configurePeriodicSync(Context context) {
-        /*
-         * Since we've created an account
-         */
-        int syncInterval = 3600; //Integer.parseInt(MovieUtils.getPreferredSyncInterval(context));
-        int syncFlexTime = syncInterval / SECONDS_IN_HOUR;
-
-        ScoreSyncAdapter.configurePeriodicSync(context, syncInterval, syncFlexTime);
-    }
-
-    public static void initializeSyncAdapter(Context context) {
-        getSyncAccount(context);
-    }
-
-    private void callSportService(){
+    private void callSportService(String dateScore){
         try {
-            insertSportDataFromJson(callApi());
+            insertSportDataFromJson(callApi(dateScore));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -314,8 +246,8 @@ public class ScoreSyncAdapter extends AbstractThreadedSyncAdapter {
             if (cVVector.size() > 0) {
                 ContentValues[] cvArray = new ContentValues[cVVector.size()];
                 cVVector.toArray(cvArray);
-
-                inserted = getContext().getContentResolver().bulkInsert(ScoreboardContract.EventEntry.CONTENT_URI, cvArray);
+                //getContentResolver().bulkInsert();
+                inserted = getContentResolver().bulkInsert(ScoreboardContract.EventEntry.CONTENT_URI, cvArray);
             }
 
 
@@ -342,7 +274,7 @@ public class ScoreSyncAdapter extends AbstractThreadedSyncAdapter {
         long Id;
 
         // First, check if the team with this city name exists in the db
-        Cursor teamCursor = getContext().getContentResolver().query(
+        Cursor teamCursor = getContentResolver().query(
                 ScoreboardContract.TeamEntry.CONTENT_URI,
                 new String[]{ScoreboardContract.TeamEntry._ID},
                 ScoreboardContract.TeamEntry.COLUMN_TEAM_ID + " = ?",
@@ -368,7 +300,7 @@ public class ScoreSyncAdapter extends AbstractThreadedSyncAdapter {
             teamValues.put(ScoreboardContract.TeamEntry.COLUMN_SITE_NAME, siteName);
 
             // Finally, insert team data into the database.
-            Uri insertedUri = getContext().getContentResolver().insert(
+            Uri insertedUri = getContentResolver().insert(
                     ScoreboardContract.TeamEntry.CONTENT_URI,
                     teamValues
             );
@@ -382,7 +314,7 @@ public class ScoreSyncAdapter extends AbstractThreadedSyncAdapter {
         return Id;
     }
 
-    public String callApi(){
+    public String callApi(String dateScore){
 
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -390,14 +322,10 @@ public class ScoreSyncAdapter extends AbstractThreadedSyncAdapter {
         // Will contain the raw JSON response as a string.
         String scoreboardJsonStr = null;
         String sport_type = "nba";
-        String authotization_value = getContext().getString(R.string.token_api);
+        String authotization_value = getString(R.string.token_api);
+        InputStream in = null;
 
         try {
-
-            final String SCOREBOARD_BASE_URL = "https://erikberg.com/events.json?";
-            final String DAY_PARAM = "date";
-            final String CATEGORY_PARAM = "sport";
-            final String AUTHORIZATION_PARAM = "Authorization";
 
             Uri builtUri = Uri.parse(SCOREBOARD_BASE_URL).buildUpon()
                     .appendQueryParameter(DAY_PARAM, ScoreUtil.getCurrentDate())
@@ -411,28 +339,41 @@ public class ScoreSyncAdapter extends AbstractThreadedSyncAdapter {
             // URL url = new URL("https://erikberg.com/events.json?date=20150325&sport=nba");
 
             urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
+            //urlConnection.setRequestMethod("GET");
             urlConnection.setRequestProperty(AUTHORIZATION_PARAM, authotization_value);
-            urlConnection.connect();
+            urlConnection.setRequestProperty(USER_AGENT, USER_AGENT_NAME);
+            urlConnection.setRequestProperty(ACCEPT_ENCODING, GZIP);
+            //urlConnection.connect();
 
-            InputStream inputStream = urlConnection.getInputStream();
-            StringBuffer buffer = new StringBuffer();
-            if (inputStream == null) {
-                // Nothing to do.
-                return null;
+            int statusCode = urlConnection.getResponseCode();
+            String encoding = urlConnection.getContentEncoding();
+            if (statusCode == HttpURLConnection.HTTP_OK) {
+                in = urlConnection.getInputStream();
+                if (in != null) {
+                    // read in http response
+                    scoreboardJsonStr = readHttpResponse(in, encoding);
+                }
             }
-            reader = new BufferedReader(new InputStreamReader(inputStream));
 
-            String line;
-            while ((line = reader.readLine()) != null) {
-                buffer.append(line + "\n");
-            }
-
-            if (buffer.length() == 0) {
-
-                return null;
-            }
-            scoreboardJsonStr = buffer.toString();
+//            urlConnection.getResponseCode();
+//            InputStream inputStream = urlConnection.getInputStream();
+//            StringBuffer buffer = new StringBuffer();
+//            if (inputStream == null) {
+//                // Nothing to do.
+//                return null;
+//            }
+//            reader = new BufferedReader(new InputStreamReader(inputStream));
+//
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                buffer.append(line + "\n");
+//            }
+//
+//            if (buffer.length() == 0) {
+//
+//                return null;
+//            }
+      //      scoreboardJsonStr = buffer.toString();
 
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
@@ -454,4 +395,32 @@ public class ScoreSyncAdapter extends AbstractThreadedSyncAdapter {
 
         return scoreboardJsonStr;
     }
+
+    static String readHttpResponse(InputStream in, String encoding) {
+        StringBuilder sb = new StringBuilder();
+        // Verify the response is compressed, before attempting to decompress it
+        try {
+            if (GZIP.equals(encoding)) {
+                in = new GZIPInputStream(in);
+            }
+        } catch (IOException ex) {
+            System.err.println("Error trying to read gzip data.");
+            ex.printStackTrace();
+            System.exit(1);
+        }
+
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+        } catch (IOException ex) {
+            System.err.println("Error reading response.");
+            ex.printStackTrace();
+            System.exit(1);
+        }
+        return sb.toString();
+    }
+
+
 }

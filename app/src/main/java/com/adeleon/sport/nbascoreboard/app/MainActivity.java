@@ -6,16 +6,13 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.adeleon.sport.nbascoreboard.app.services.ScoreSyncAdapter;
 
-
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ScoreSyncAdapter.initializeSyncAdapter(this);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()

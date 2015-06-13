@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,6 +27,8 @@ import android.widget.TextView;
 
 import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract;
 import com.adeleon.sport.nbascoreboard.app.data.ScoreboardProvider;
+import com.adeleon.sport.nbascoreboard.app.services.ScoreIntentService;
+import com.adeleon.sport.nbascoreboard.app.services.ScoreResultReceiver;
 import com.adeleon.sport.nbascoreboard.app.utils.ScoreUtil;
 
 import java.text.ParseException;
@@ -37,7 +41,7 @@ import java.util.Date;
  * Created by adeleon on 3/25/2015.
  */
 
-public class ScoreboardFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ScoreboardFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, ScoreResultReceiver.Receiver {
     private static final String TAG_DATE_DIALOG = "date_dialog";
     private EditText dateScoreEditText;
     private DatePickerFragment dateScoreDatePickDialog;
@@ -67,6 +71,8 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
     public static final int COL_AWAY_PERIOD_SCORES = 4;
     public static final int COL_HOME_PERIOD_SCORES = 5;
 
+    private ScoreResultReceiver scoreResultReceiver;
+
     public ScoreboardFragment() {
     }
 
@@ -76,12 +82,6 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
         // Add this line in order for this fragment to handle menu events.
 
         ScoreUtil.initcialize(getActivity());
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(SCORED_LOADER, null, this);
-        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -104,37 +104,45 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
     }
 
     private void updateScoreboard() {
-//        FetchScoreTask scoreTask = new FetchScoreTask(getActivity(), mScoreboardAdapter);
-//        String dayScoreStr, dayScoreResult = null;
-//        Date date = null;
-//
-//        if (! dateScoreEditText.getText().toString().equals("")) {
-//            formatter = new SimpleDateFormat("MMMM d, yyyy");
-//            dayScoreStr = dateScoreEditText.getText().toString();
-//            try {
-//            date = formatter.parse(dayScoreStr);
-//            formatter = new SimpleDateFormat("yyyyMMdd", java.util.Locale.getDefault());
-//            dayScoreResult  = formatter.format(date);
-//            } catch (ParseException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        else{
-//            formatter = new SimpleDateFormat("yyyyMMdd", java.util.Locale.getDefault());
-//            Calendar cal = Calendar.getInstance();
-//            dayScoreResult = formatter.format( cal.getTime());
-//            formatter  = new SimpleDateFormat("MMMM d, yyyy", java.util.Locale.getDefault());
-//            dayScoreStr = formatter.format( cal.getTime());
-//            dateScoreEditText.setText(dayScoreStr);
-//        }
-//
-//        scoreTask.execute(dayScoreResult);
+        // FetchScoreTask scoreTask = new FetchScoreTask(getActivity(), mScoreboardAdapter);
+        String dayScoreStr, dayScoreResult = null;
+        Date date = null;
+
+        if (!dateScoreEditText.getText().toString().equals("")) {
+            formatter = new SimpleDateFormat("MMMM d, yyyy");
+            dayScoreStr = dateScoreEditText.getText().toString();
+            try {
+                date = formatter.parse(dayScoreStr);
+                formatter = new SimpleDateFormat("yyyyMMdd", java.util.Locale.getDefault());
+                dayScoreResult = formatter.format(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        } else {
+            formatter = new SimpleDateFormat("yyyyMMdd", java.util.Locale.getDefault());
+            Calendar cal = Calendar.getInstance();
+            dayScoreResult = formatter.format(cal.getTime());
+            formatter = new SimpleDateFormat("MMMM d, yyyy", java.util.Locale.getDefault());
+            dayScoreStr = formatter.format(cal.getTime());
+            dateScoreEditText.setText(dayScoreStr);
+        }
+
+        scoreResultReceiver = new ScoreResultReceiver(new Handler());
+        scoreResultReceiver.setReceiver(this);
+
+        Intent intentService = new Intent(Intent.ACTION_SYNC, null, getActivity(), ScoreIntentService.class);
+        intentService.putExtra(ScoreIntentService.PARAM_INTENT_SERVICE, dayScoreResult);
+        intentService.putExtra("receiver", scoreResultReceiver);
+        intentService.putExtra("requestId", 101);
+
+        getActivity().startService(intentService);
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        updateScoreboard();
+       // updateScoreboard();
     }
 
     @Override
@@ -163,17 +171,17 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
                 }
             }
         });
-//
-//        dateScoreEditText = (EditText) rootView.findViewById(R.id.date_score_edittext);
-//        dateScoreEditText.setInputType(InputType.TYPE_NULL);
-//        dateScoreEditText.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (v == dateScoreEditText) {
-//                    dateScoreDatePickDialog.show(getFragmentManager(), TAG_DATE_DIALOG);
-//                }
-//            }
-//        });
+
+        dateScoreEditText = (EditText) rootView.findViewById(R.id.date_score_edittext);
+        dateScoreEditText.setInputType(InputType.TYPE_NULL);
+        dateScoreEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v == dateScoreEditText) {
+                    dateScoreDatePickDialog.show(getFragmentManager(), TAG_DATE_DIALOG);
+                }
+            }
+        });
 
         setDateTimeField();
 
@@ -211,6 +219,8 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
                 }
 
                 dateScoreEditText.setText(formatter.format(date));
+                updateScoreboard();
+
             }
         });
     }
@@ -235,6 +245,17 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
         mScoreboardAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onReceiveResult(int resultCode, Bundle resultData) {
+        switch (resultCode) {
+            case ScoreIntentService.STATUS_FINISHED:
+
+                getLoaderManager().initLoader(SCORED_LOADER, null, this);
+
+                break;
+        }
     }
 
 
