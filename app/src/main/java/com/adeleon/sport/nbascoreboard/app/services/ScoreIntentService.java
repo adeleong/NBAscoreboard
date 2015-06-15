@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
@@ -72,6 +71,7 @@ public class ScoreIntentService extends IntentService {
             try {
                 callSportService(intent.getExtras().getString(PARAM_INTENT_SERVICE));
                 /* Sending result back to activity */
+                receiver.send(STATUS_FINISHED, bundle);
             } catch (Exception e) {
 
                 /* Sending error message back to activity */
@@ -328,7 +328,7 @@ public class ScoreIntentService extends IntentService {
         try {
 
             Uri builtUri = Uri.parse(SCOREBOARD_BASE_URL).buildUpon()
-                    .appendQueryParameter(DAY_PARAM, ScoreUtil.getCurrentDate())
+                    .appendQueryParameter(DAY_PARAM, dateScore /* ScoreUtil.getCurrentDate()*/)
                     .appendQueryParameter(CATEGORY_PARAM, sport_type)
                     .build();
 

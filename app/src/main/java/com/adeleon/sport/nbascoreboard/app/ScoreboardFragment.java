@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -46,6 +45,7 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
     private EditText dateScoreEditText;
     private DatePickerFragment dateScoreDatePickDialog;
     private SimpleDateFormat formatter;
+    static String dayScoreResult = null;
 
 
     private TextView noDataTextView;
@@ -105,7 +105,7 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
 
     private void updateScoreboard() {
         // FetchScoreTask scoreTask = new FetchScoreTask(getActivity(), mScoreboardAdapter);
-        String dayScoreStr, dayScoreResult = null;
+        String dayScoreStr = null;
         Date date = null;
 
         if (!dateScoreEditText.getText().toString().equals("")) {
@@ -227,7 +227,7 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public android.support.v4.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri scoredUri = ScoreboardContract.EventEntry.buildEventDate(ScoreUtil.getCurrentDate());
+        Uri scoredUri = ScoreboardContract.EventEntry.buildEventDate( dayScoreResult/*ScoreUtil.getCurrentDate()*/);
 
         return new CursorLoader(getActivity(), scoredUri, SCORE_COLUMNS, null, null, null);
     }
