@@ -29,6 +29,6 @@ public class TestScoreboardContract extends AndroidTestCase {
                 TEST_EVENT_DATE, eventUri.getLastPathSegment());
         assertEquals("Error: Event Id and Date Uri doesn't match our expected result",
                 eventUri.toString(),
-                "content://com.adeleon.sport.nbascoreboard.app/event/2015-03-27T00%3A00%3A00-04%3A00");
+                "content://com.adeleon.sport.nbascoreboard.app/event/2015-03-27T00:00:00-04:00");
     }
 }
