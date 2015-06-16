@@ -68,6 +68,7 @@ public class ScoreIntentService extends IntentService {
             receiver.send(STATUS_RUNNING, Bundle.EMPTY);
 
             try {
+               //
                 callSportService(intent.getExtras().getString(PARAM_INTENT_SERVICE));
                 /* Sending result back to activity */
                 receiver.send(STATUS_FINISHED, bundle);
@@ -354,26 +355,6 @@ public class ScoreIntentService extends IntentService {
                     scoreboardJsonStr = readHttpResponse(in, encoding);
                 }
             }
-
-//            urlConnection.getResponseCode();
-//            InputStream inputStream = urlConnection.getInputStream();
-//            StringBuffer buffer = new StringBuffer();
-//            if (inputStream == null) {
-//                // Nothing to do.
-//                return null;
-//            }
-//            reader = new BufferedReader(new InputStreamReader(inputStream));
-//
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                buffer.append(line + "\n");
-//            }
-//
-//            if (buffer.length() == 0) {
-//
-//                return null;
-//            }
-      //      scoreboardJsonStr = buffer.toString();
 
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);

@@ -67,15 +67,5 @@ public class ScoreAdapter extends CursorAdapter {
         viewHolder.pointsFirstTeam.setText(cursor.getString(ScoreboardFragment.COL_AWAY_PERIOD_SCORES));
         viewHolder.pointsSecondTeam.setText(cursor.getString(ScoreboardFragment.COL_HOME_PERIOD_SCORES));
 
-//        String url = cursor.getString(MoviesFragment.COL_MOVIE_THUMBNAIL_URL);
-//        Uri uri = Uri.parse(url);
-//
-//        viewHolder.iconView.setImageURI(uri);
-//
-//        String title = cursor.getString(MoviesFragment.COL_MOVIE_TITLE);
-//        viewHolder.titleView.setText(title);
-//
-//        String date = cursor.getString(MoviesFragment.COL_MOVIE_RELEASE_DATE);
-//        viewHolder.releaseDateView.setText(MovieUtils.formatDate(date));
     }
 }

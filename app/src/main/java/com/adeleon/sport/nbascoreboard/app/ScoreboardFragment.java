@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CursorAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -30,6 +31,7 @@ import com.adeleon.sport.nbascoreboard.app.services.ScoreIntentService;
 import com.adeleon.sport.nbascoreboard.app.services.ScoreResultReceiver;
 import com.adeleon.sport.nbascoreboard.app.utils.ScoreUtil;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -41,11 +43,14 @@ import java.util.Date;
  */
 
 public class ScoreboardFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, ScoreResultReceiver.Receiver {
+    private static final String ADAPTER_INSTANCE_STATE_KEY = "adapter-instance-state";
     private static final String TAG_DATE_DIALOG = "date_dialog";
     private EditText dateScoreEditText;
     private DatePickerFragment dateScoreDatePickDialog;
     private SimpleDateFormat formatter;
     static String dayScoreResult = null;
+
+    Cursor cursor;
 
 
     private TextView noDataTextView;
@@ -76,12 +81,37 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
     public ScoreboardFragment() {
     }
 
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if(listView.getAdapter() != null){
+            outState.putSerializable(ADAPTER_INSTANCE_STATE_KEY, (Serializable) ((ScoreAdapter) listView.getAdapter()).getCursor());
+        }
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
 
+        if(savedInstanceState != null){
+            cursor = (Cursor) savedInstanceState.getSerializable(ADAPTER_INSTANCE_STATE_KEY);
+        }
+
         ScoreUtil.initcialize(getActivity());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(cursor != null){
+            ScoreAdapter scoreAdapter = new ScoreAdapter(getActivity(),cursor,0);
+            listView.setAdapter(scoreAdapter);
+        }
     }
 
     @Override
@@ -142,7 +172,7 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onStart() {
         super.onStart();
-       // updateScoreboard();
+        updateScoreboard();
     }
 
     @Override
