@@ -18,7 +18,6 @@ import android.util.Log;
 
 import com.adeleon.sport.nbascoreboard.app.R;
 import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract;
-import com.adeleon.sport.nbascoreboard.app.utils.ScoreUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -290,8 +289,7 @@ public class ScoreSyncAdapter extends AbstractThreadedSyncAdapter {
                 ContentValues eventValues = new ContentValues();
 
                 eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_ID, eventId);
-                eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_DATE, ScoreUtil.getCurrentDate());
-                eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_STATUS, eventStatus);
+                eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_DATE, " ");
                 eventValues.put(ScoreboardContract.EventEntry.COLUMN_START_DATE_TIME, eventStartDate);
                 eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_TEAM_ID_KEY, IdTeamAway);
                 eventValues.put(ScoreboardContract.EventEntry.COLUMN_HOME_TEAM_ID_KEY, IdTeamHome);
@@ -400,7 +398,7 @@ public class ScoreSyncAdapter extends AbstractThreadedSyncAdapter {
             final String AUTHORIZATION_PARAM = "Authorization";
 
             Uri builtUri = Uri.parse(SCOREBOARD_BASE_URL).buildUpon()
-                    .appendQueryParameter(DAY_PARAM, ScoreUtil.getCurrentDate())
+                    .appendQueryParameter(DAY_PARAM, " ")
                     .appendQueryParameter(CATEGORY_PARAM, sport_type)
                     .build();
 

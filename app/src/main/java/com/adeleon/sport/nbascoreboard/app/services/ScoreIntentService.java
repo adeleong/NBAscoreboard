@@ -13,7 +13,6 @@ import android.util.Log;
 
 import com.adeleon.sport.nbascoreboard.app.R;
 import com.adeleon.sport.nbascoreboard.app.data.ScoreboardContract;
-import com.adeleon.sport.nbascoreboard.app.utils.ScoreUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -221,8 +220,9 @@ public class ScoreIntentService extends IntentService {
 
                 ContentValues eventValues = new ContentValues();
 
+                eventDate = eventDate.substring(0,10).replace("-","").trim();
                 eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_ID, eventId);
-                eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_DATE, ScoreUtil.getCurrentDate());
+                eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_DATE, eventDate);
                 eventValues.put(ScoreboardContract.EventEntry.COLUMN_EVENT_STATUS, eventStatus);
                 eventValues.put(ScoreboardContract.EventEntry.COLUMN_START_DATE_TIME, eventStartDate);
                 eventValues.put(ScoreboardContract.EventEntry.COLUMN_AWAY_TEAM_ID_KEY, IdTeamAway);

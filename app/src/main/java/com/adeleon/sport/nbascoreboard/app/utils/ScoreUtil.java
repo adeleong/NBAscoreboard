@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable;
 import com.adeleon.sport.nbascoreboard.app.R;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 /**
  * Created by theade on 4/26/2015.
@@ -25,12 +24,12 @@ public class ScoreUtil {
         return shortenedDateFormat.format(time);
     }
 
-    public static String getCurrentDate() {
+   /* public static String getCurrentDate() {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd", java.util.Locale.getDefault());
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_MONTH, -1);
         return formatter.format(cal.getTime());
-    }
+    }*/
 
     public static Drawable getImagenTeam(String nameTeam) {
 
