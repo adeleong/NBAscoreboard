@@ -15,11 +15,9 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.CursorAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -31,7 +29,6 @@ import com.adeleon.sport.nbascoreboard.app.services.ScoreIntentService;
 import com.adeleon.sport.nbascoreboard.app.services.ScoreResultReceiver;
 import com.adeleon.sport.nbascoreboard.app.utils.ScoreUtil;
 
-import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -86,9 +83,9 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        if(listView.getAdapter() != null){
+      /*  if(listView.getAdapter() != null){
             outState.putSerializable(ADAPTER_INSTANCE_STATE_KEY, (Serializable) ((ScoreAdapter) listView.getAdapter()).getCursor());
-        }
+        }*/
 
     }
 
@@ -119,7 +116,7 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
         inflater.inflate(R.menu.scoreboardfragment, menu);
     }
 
-    @Override
+   /* @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -131,7 +128,7 @@ public class ScoreboardFragment extends Fragment implements LoaderManager.Loader
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     private void updateScoreboard() {
         // FetchScoreTask scoreTask = new FetchScoreTask(getActivity(), mScoreboardAdapter);
